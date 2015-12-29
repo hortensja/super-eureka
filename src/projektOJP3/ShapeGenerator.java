@@ -27,15 +27,14 @@ private static Random rand = new Random(System.nanoTime());
 	public static Shape generatePie(double r, double angle1, double angle2){
 		
 		ConvexShape cshape = new ConvexShape();
-		//double r = 10;
 		double angle = angle1;
-		cshape.setPointCount((int)(Math.abs(angle2-angle1)/(Math.PI/24)));
+		cshape.setPointCount((int)(Math.abs(angle2-angle1)/(Math.PI/24)+1));
 		org.jsfml.graphics.Color color = new org.jsfml.graphics.Color((int)(rand.nextDouble()*255),(int)(rand.nextDouble()*255), (int)(rand.nextDouble()*255));
 				
 		cshape.setPoint(0, org.jsfml.system.Vector2f.ZERO);
+		
 		for (int i=1;i<cshape.getPointCount();i++){
-			//v.
-			cshape.setPoint(i, new Vector2f((float)(r*Math.sin(angle)),(float)(r*Math.cos(angle))));
+			cshape.setPoint(i, new Vector2f((float)(r*Math.cos(angle)),(float)(r*Math.sin(angle))));
 			angle+=(angle2-angle1)/(cshape.getPointCount()-2);
 		}
 		
