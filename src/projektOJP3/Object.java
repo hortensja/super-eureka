@@ -80,8 +80,6 @@ public class Object implements Drawable,Processable{
 	
 		for (int i=0;i<getShape().getPointCount();i++){
 			
-			//System.out.println(mShape.getPoint(i));
-			
 			if(getShape().getPoint(i).x<xMin)
 				xMin=getShape().getPoint(i).x;
 			if(getShape().getPoint(i).x>xMax)
@@ -90,11 +88,7 @@ public class Object implements Drawable,Processable{
 				yMin=getShape().getPoint(i).y;
 			if(getShape().getPoint(i).y>yMax)
 				yMax=getShape().getPoint(i).y;
-			
 		}
-		
-		//System.out.println(xMin + " " + xMax);
-		
 		if((mX+xMax)<(2*World.getMidX()) && (mY+yMax)<(2*World.getMidY()) && (mY-yMin)>0 && (mX-xMin)>0)
 			return true;
 		return false;
@@ -107,10 +101,25 @@ public class Object implements Drawable,Processable{
 		//randomizeDirection();
 		randomizeVelocity();
 	}
+	
+	protected double dot(double a1, double a2, double b1, double b2){
+		return a1*b1+a2*b2;
+	}
+
 	protected void bounce(){
 	
 		mdX = -mdX;
 		mdY = -mdY;
+	}
+	
+	protected void bounce(Vector2f normal){
+	
+		double newdX = mdX - 2*dot(mdX, mdY, normal.x, normal.y)*normal.x;
+		double newdY = mdY - 2*dot(mdX, mdY, normal.x, normal.y)*normal.y;
+		
+		Vector2f newV = new Vector2f((float)newdX, (float)newdY);
+		mdX = newV.x;
+		mdY = newV.y;
 	}
 	
 	protected double getRadius(){
@@ -145,7 +154,6 @@ public class Object implements Drawable,Processable{
 		{
 			onOutOfBounds();
 		}
-		//System.out.println(mX+" "+mY);
 
 		mX += timestep * mdX * mVel;
 		mY += timestep * mdY * mVel;

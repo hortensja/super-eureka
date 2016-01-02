@@ -14,14 +14,18 @@ public class CollidableShape {
 	private final Vector2f[] mNormals;
 	private Vector2f mShapePosition;
 	
+	private double vectorLength(Vector2f v){
+		return Math.sqrt(v.x*v.x+v.y*v.y);
+	}
+	
 	public CollidableShape(Shape shape) {
 		
 		mPoints = shape.getPoints();
-	//to iê nie aktualizuje
 		mNormals = new Vector2f[shape.getPointCount()];
 		for(int i=0;i<shape.getPointCount();i++){
 			Vector2f vector = sub(mPoints[i], mPoints[(i+1)%shape.getPointCount()]);
 			mNormals[i] = new Vector2f(-vector.y, vector.x);
+			mNormals[i] = div(mNormals[i], (float)vectorLength(mNormals[i]));
 		}
 		
 		mShapePosition = shape.getPosition();
@@ -31,25 +35,48 @@ public class CollidableShape {
 		mShapePosition = v;
 	}
 	
-	protected double dot(Vector2f v1, Vector2f v2){
+	public static double dot(Vector2f v1, Vector2f v2){
 		return v1.x*v2.x+v1.y*v2.y;
 	}
 	
 	protected boolean areColliding(Vector2f v){
 
-	//		System.out.println("shajp position: "+ mShapePosition);
 		double oneDot;
 		for (int i=0;i<mNormals.length;i++){
-//			System.out.println("pkt: " + mPoints[i]);
 
-		//	System.out.println("normala: " + mNormals[i]);
-			oneDot = dot(mNormals[i], add( mPoints[i], mShapePosition));
+			oneDot = dot(mNormals[i], add(mPoints[i], mShapePosition));
 			if (dot(mNormals[i],v)>oneDot)
 				return false;
 		}
 		
-		return true;
-				
+		return true;	
+	}
+	
+	protected double maximalDotProduct(Vector2f normal, Vector2f originPoint, CollidableShape cs){
+		double maximum = Double.NEGATIVE_INFINITY;
+		double currentDot = 0.0;
+		double oneDot = dot(normal, originPoint);
+		for(int i=0; i<cs.mPoints.length;i++){
+			currentDot = -dot(normal, add(cs.mPoints[i], cs.mShapePosition)) + oneDot; 
+			if (currentDot>maximum){
+				maximum = currentDot;
+			}
+		}
+		return maximum;
+	}
+	
+	protected Vector2f minimalDistanceNormal(CollidableShape cs){
+		int minimumNormalPosition = 0;
+		double minimalDistance = Double.MAX_VALUE;
+		double maximalCurrentDotProduct = 0.0;
+		for(int i=0;i<mNormals.length;i++){
+			maximalCurrentDotProduct = maximalDotProduct(mNormals[i], add(mShapePosition,mPoints[i]), cs);
+			if (maximalCurrentDotProduct<minimalDistance){
+				minimalDistance = maximalCurrentDotProduct;
+				minimumNormalPosition = i;
+			}
+		}
+		return mNormals[minimumNormalPosition];
 	}
 	
 	public boolean areColliding(CollidableShape cs2){
