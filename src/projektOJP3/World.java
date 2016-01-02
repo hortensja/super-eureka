@@ -7,6 +7,8 @@ import org.jsfml.graphics.RenderWindow;
 
 public class World implements Drawable, Processable{
 
+
+	private final ArrayList<Object> mObjects = new ArrayList<>() ;
 	
 	private static int midX = 540;
 	private static int midY = 360;
@@ -25,14 +27,11 @@ public class World implements Drawable, Processable{
 	}
 	
 	public World(){
-		int numberOfTrees = mRandom.nextInt(maxNumberOfObjects);
-		int numberOfWalls = mRandom.nextInt(maxNumberOfObjects);
-		int newX = mRandom.nextInt(midX*2);
-		int newY = mRandom.nextInt(midY*2);
+		int numberOfTrees = mRandom.nextInt(maxNumberOfObjects)+1;
+		int numberOfWalls = mRandom.nextInt(maxNumberOfObjects)+1;
+		
 		for(int i=0;i<numberOfTrees;i++){
-			addObject(generateTrees(newX, newY));
-			newX = mRandom.nextInt(midX*2);
-			newY = mRandom.nextInt(midY*2);
+			addObject(generateTrees(mRandom.nextInt(midX*2), mRandom.nextInt(midY*2)));
 		}
 		for(int i=0;i<numberOfWalls;i++){
 			addObject(generateWalls(mRandom.nextInt(midX*2), mRandom.nextInt(midY*2)));
@@ -65,7 +64,6 @@ public class World implements Drawable, Processable{
 		World.midY = midY;
 	}
 
-	private final ArrayList<Object> mObjects = new ArrayList<>() ;
 	
 	
 	@Override
@@ -83,7 +81,7 @@ public class World implements Drawable, Processable{
 
 			for(int j=i; j<mObjects.size();j++){
 				Object object2 = mObjects.get(j);
-				if (Collision.areCollidingCircleTest(object, object2)){
+				if (Collision.areCollidingBetterTest(object, object2)){
 					object.bounce();
 					object2.bounce();
 				}

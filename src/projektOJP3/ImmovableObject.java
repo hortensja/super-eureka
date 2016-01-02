@@ -6,7 +6,7 @@ public class ImmovableObject extends Object {
 
 	public ImmovableObject(double x, double y, Shape shape) {
 		super(x, y, shape);
-		// TODO Auto-generated constructor stub
+		updateShapePosition();		
 	}
 
 	

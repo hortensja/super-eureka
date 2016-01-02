@@ -52,7 +52,7 @@ private static Random rand = new Random(System.nanoTime());
 	}
 	
 	public static Shape generateWall(){
-		Shape shape = new RectangleShape(new Vector2f(rand.nextFloat()*100+10, rand.nextFloat()*100+10));
+		Shape shape = new RectangleShape(new Vector2f(rand.nextFloat()*150+10, rand.nextFloat()*150+10));
 
 		org.jsfml.graphics.Color color = new org.jsfml.graphics.Color(255,0,0);
 		shape.setFillColor(color);

@@ -11,6 +11,7 @@ public class Object implements Drawable,Processable{
 
 	protected static Random mRandom = new Random(System.nanoTime());
 	private final Shape mShape;
+	private CollidableShape mCollidableShape;
 	
 	private double mdX;
 	private double mdY;
@@ -25,10 +26,11 @@ public class Object implements Drawable,Processable{
 		if (x>=(World.getMidX()*2) || y>=(World.getMidY()*2) || x<=0 || y<=0){
 			this.resetPos();
 		}
-		shape.setOrigin(-shape.getLocalBounds().width/2, -shape.getLocalBounds().height/2);
+		//shape.setOrigin(-shape.getLocalBounds().width/2, -shape.getLocalBounds().height/2);
 		mShape = shape;
 		mX = x;
 		mY = y;	
+		mCollidableShape = new CollidableShape(this.getShape());
 		randomizeDirection();
 		randomizeVelocity();
 		
@@ -107,8 +109,8 @@ public class Object implements Drawable,Processable{
 	}
 	protected void bounce(){
 	
-		mdX = -mdX+(mRandom.nextDouble()*0.1);
-		mdY = -mdY+(mRandom.nextDouble()*0.1);
+		mdX = -mdX;
+		mdY = -mdY;
 	}
 	
 	protected double getRadius(){
@@ -122,6 +124,7 @@ public class Object implements Drawable,Processable{
 	protected void updateShapePosition(){
 
 		getShape().setPosition((float)mX, (float)mY);
+		mCollidableShape.setShapePosition(getPosition());
 	}
 	
 	public double getX() {
@@ -158,5 +161,9 @@ public class Object implements Drawable,Processable{
 		return mShape;
 	}
 	
+	public CollidableShape getCollidableShape(){
+
+		return mCollidableShape;
+	}
 	
 }

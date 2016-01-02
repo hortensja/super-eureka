@@ -1,9 +1,13 @@
 package projektOJP3;
 
 import org.jsfml.graphics.Color;
+import org.jsfml.graphics.RectangleShape;
+import org.jsfml.graphics.Shape;
 import org.jsfml.graphics.RenderWindow;
+import org.jsfml.system.Vector2f;
 import org.jsfml.window.VideoMode;
 import org.jsfml.window.event.Event;
+
 
 public class BlindManWithYoyo {
 
@@ -19,6 +23,16 @@ public class BlindManWithYoyo {
 		window.create(new VideoMode(1080,720), "Neurological cos tam cos tam");
 	
 		System.out.println(window.getSize());
+		
+		
+		Shape kwadrat = new RectangleShape(new Vector2f(10,10));
+		Vector2f punkt = new Vector2f(0,-1);
+		
+		CollidableShape cs = new CollidableShape(kwadrat);
+		System.out.println(cs.areColliding(punkt));
+		
+		//window.close();
+		
 		
 		World world = new World();
 		while(window.isOpen())
