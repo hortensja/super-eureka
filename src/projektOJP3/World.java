@@ -9,6 +9,7 @@ package projektOJP3;
 import java.util.ArrayList;
 import java.util.Random;
 
+import org.jsfml.graphics.RectangleShape;
 import org.jsfml.graphics.RenderWindow;
 import org.jsfml.system.Vector2f;
 
@@ -16,7 +17,7 @@ public class World implements Drawable, Processable{
 
 
 	private final ArrayList<Object> mObjects = new ArrayList<>();
-	private final ArrayList<Object> mPersons = new ArrayList<>();
+	private final ArrayList<Person> mPersons = new ArrayList<>();
 	
 	private static int midX;
 	private static int midY;
@@ -38,7 +39,11 @@ public class World implements Drawable, Processable{
 		midX = window.getSize().x/2;
 		midY = window.getSize().y/2;
 		
-		//addObject()
+		//adding bounds just in case
+		addObject(new ImmovableObject(0, -1, ShapeGenerator.generateRect(2*midX, 1)));
+		addObject(new ImmovableObject(0, 2*midY+1, ShapeGenerator.generateRect(2*midX, 1)));
+		addObject(new ImmovableObject(-1, 0, ShapeGenerator.generateRect(1, 2*midY)));
+		addObject(new ImmovableObject(2*midX+1, 0, ShapeGenerator.generateRect(1, 2*midY)));
 		
 		int numberOfTrees = mRandom.nextInt(maxNumberOfObjects)+1;
 		int numberOfWalls = mRandom.nextInt(maxNumberOfObjects)+1;
@@ -55,7 +60,7 @@ public class World implements Drawable, Processable{
 			} while(isCollidingWithAnything(o));
 			addObject(o);
 		}
-		System.out.println(midX+ " " + midY);
+		System.out.println("World size: " + midX+ " " + midY);
 	}
 	
 	protected boolean isCollidingWithAnything(Object o){
@@ -111,19 +116,29 @@ public class World implements Drawable, Processable{
 		
 		int i = 1;
 		
-		for (Object person : mPersons) {
+		for (Person person : mPersons) {
 			person.process(timestep);
 
 			for(Object object : mObjects) {
-				if (Collision.areCollidingBetterTest(object, person)){
-					Collision.collide(object, person);
+				
+				if (Collision.areCollidingBetterTest(person.getCollidableShape(), object.getCollidableShape())){
+					Collision.collideObjectWithObject(person, object);
+				} else if (Collision.areCollidingBetterTest(person.getCollidableVision(), object.getCollidableShape())){
+					Collision.collideVisionWithObject(person, object);
 				}
+
 			}
 
 			for(int j=i; j<mPersons.size();j++){
+				Object person1 = person;
 				Object person2 = mPersons.get(j);
-				if (Collision.areCollidingBetterTest(person, person2)){
-					Collision.collide(person, person2);
+				Person person2prim = mPersons.get(j);
+				if (Collision.areCollidingBetterTest(person1, person2)){
+					Collision.collideObjectWithObject(person1, person2);
+				} else if (Collision.areCollidingBetterTest(person.getCollidableVision(), person2.getCollidableShape())){
+					Collision.collideVisionWithObject(person, person2);
+				} else if (Collision.areCollidingBetterTest(person.getCollidableShape(), person2prim.getCollidableVision())){
+					Collision.collideVisionWithObject(person2prim, person);
 				}
 			}
 			i++;

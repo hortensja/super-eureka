@@ -46,6 +46,9 @@ public class Object implements Drawable,Processable{
 		this.mPos = mPos;
 	}
 	
+	protected double getdVMod(){
+		return MathUtil.vectorLength(mdV);
+	}
 	
 	
 	public double getVel() {
@@ -133,18 +136,14 @@ public class Object implements Drawable,Processable{
 		bounce(normal);
 		//resetPos();
 		//randomizeDirection();
-		randomizeVelocity();
+		//randomizeVelocity();
 	}
 	
 	
 	protected void bounce(Vector2f normal){
 	
-		double kappa = 2*MathUtil.dot(mdV, normal);
-		
-		mdV = sub(mdV, mul(normal, (float) kappa));
-		
-		//mdV = newV;
-		
+		double kappa = 2*MathUtil.dot(mdV, normal);		
+		mdV = sub(mdV, mul(normal, (float) kappa));	
 	}
 	
 	protected double getRadius(){

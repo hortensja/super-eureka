@@ -65,5 +65,13 @@ private static Random rand = new Random(System.nanoTime());
 		return shape;
 	}
 	
+
+	public static Shape generateRect(float x, float y){
+		Shape shape = new RectangleShape(new Vector2f(x,y));
+
+		org.jsfml.graphics.Color color = new org.jsfml.graphics.Color(255,0,255);
+		shape.setFillColor(color);
+		return shape;
+	}
 	
 }

@@ -17,7 +17,6 @@ public class ButtonGenerator {
 	private static void loadFont(){
 		try {
 		    mFont.loadFromFile(Paths.get("resources\\bell.ttf"));
-		    System.out.println("udalo sie");
 		} catch(IOException ex) {
 		    //Failed to load font
 		    ex.printStackTrace();

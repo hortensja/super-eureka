@@ -32,7 +32,11 @@ public class Collision {
 		
 	}
 	
-	public static void collide(Object object, Object object2){
+	public static boolean areCollidingBetterTest(CollidableShape cs1, CollidableShape cs2){
+		return cs1.areColliding(cs2) || cs2.areColliding(cs1);
+	}
+	
+	public static void collideObjectWithObject(Object object, Object object2){
 		
 		Vector2f normal1 = object.getCollidableShape().minimalDistanceNormal(object2.getCollidableShape());
 		Vector2f normal2 = object2.getCollidableShape().minimalDistanceNormal(object.getCollidableShape());
@@ -48,5 +52,24 @@ public class Collision {
 			//System.out.println("baunsuje o: " + normal1);
 		}
 	}
+public static void collideVisionWithObject(Person person, Object object2){
+		
+		Vector2f normal1 = person.getCollidableVision().minimalDistanceNormal(object2.getCollidableShape());
+		Vector2f normal2 = object2.getCollidableShape().minimalDistanceNormal(person.getCollidableVision());
+	
+		if(MathUtil.dot(person.getdV(), normal2)<0){
+			person.turn(normal2);
+			//System.out.println("baunsuje o: " + normal2);
+			//object2.bounce(normal2);
+		}
+		if(MathUtil.dot(object2.getdV(), normal1)<0){
+			person.turn(normal1);
+			//object2.bounce(normal1);
+			//System.out.println("baunsuje o: " + normal1);
+		}
+	}
+
+	
+	
 	
 }

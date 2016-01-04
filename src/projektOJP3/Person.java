@@ -22,7 +22,7 @@ public class Person extends Object {
 	//K¥T ZERO JEST POZIOMO
 	
 	private Shape mVision;
-	private org.jsfml.graphics.Color mVisionColor = new org.jsfml.graphics.Color(120,120,120);
+	private org.jsfml.graphics.Color mVisionColor = new org.jsfml.graphics.Color(180,180,180);
 	
 	public Person(double x, double y, Options o) {
 		super(x, y, new CircleShape(15));
@@ -65,9 +65,19 @@ public class Person extends Object {
 	@Override
 	protected void bounce(Vector2f normal){
 		super.bounce(normal);
-		double theta = Math.atan2(getdV().y, getdV().x)*180/Math.PI;
-		mVision.setRotation((float) ((Math.atan2(getdV().y, getdV().x)-mLeftVisionAngle)*180/Math.PI));
-		//mVision.setOrigin(getShape().getOrigin().x-15, getShape().getOrigin().y-15);
+		updateVisionRotation();
+	}
+	
+	protected void turn(Vector2f normal){
+		//super.bounce(normal);
+
+		double kappa = 0.1*MathUtil.dot(getdV(), normal);
+		double originaldVLength = getdVMod();
+		Vector2f newdV = sub(getdV(), mul(normal, (float) kappa));
+		double newdVLength = MathUtil.vectorLength(newdV);
+		setdV(mul(newdV, (float) (originaldVLength/newdVLength)));	
+		//setVel(2*getVel());
+		updateVisionRotation();
 	}
 
 	@Override
@@ -77,8 +87,16 @@ public class Person extends Object {
 		
 	}
 	
+	protected void updateVisionRotation(){
+		mVision.setRotation((float) ((Math.atan2(getdV().y, getdV().x)-mLeftVisionAngle)*180/Math.PI));		
+	}
+	
 	@Override
 	public CollidableShape getCollidableShape(){
+		return new CollidableShape(getShape());
+	}
+	
+	public CollidableShape getCollidableVision(){
 		return new CollidableShape(mVision);
 	}
 	
