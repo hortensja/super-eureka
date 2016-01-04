@@ -5,6 +5,7 @@ import java.util.Random;
 import org.jsfml.graphics.RenderWindow;
 import org.jsfml.graphics.Shape;
 import org.jsfml.system.Vector2f;
+import static org.jsfml.system.Vector2f.*;
 
 public class Object implements Drawable,Processable{
 
@@ -13,61 +14,57 @@ public class Object implements Drawable,Processable{
 	private final Shape mShape;
 	private CollidableShape mCollidableShape;
 	
-	private double mdX;
-	private double mdY;
+	private Vector2f mdV;
 	private double mVel;
+		
+	private Vector2f mPos;
 	
-	private double mX;
-	private double mY;
 	
-	
-	public Object(double x, double y, Shape shape)
-	{
+	public Object(double x, double y, Shape shape) {
 		if (x>=(World.getMidX()*2) || y>=(World.getMidY()*2) || x<=0 || y<=0){
 			this.resetPos();
 		}
 		//shape.setOrigin(-shape.getLocalBounds().width/2, -shape.getLocalBounds().height/2);
 		mShape = shape;
-		mX = x;
-		mY = y;	
+		mPos = new Vector2f((float) x, (float) y);
 		mCollidableShape = new CollidableShape(this.getShape());
+		
 		randomizeDirection();
 		randomizeVelocity();
-		
 	}
-	public double getdX() {
-		return mdX;
+	
+	public Vector2f getdV() {
+		return mdV;
 	}
-	public void setdX(double mdX) {
-		this.mdX = mdX;
+	public void setdV(Vector2f mdV) {
+		this.mdV = mdV;
 	}
-	public double getdY() {
-		return mdY;
+	public Vector2f getPos() {
+		return mPos;
 	}
-	public void setdY(double mdY) {
-		this.mdY = mdY;
+	public void setPos(Vector2f mPos) {
+		this.mPos = mPos;
 	}
+	
+	
+	
 	public double getVel() {
 		return mVel;
 	}
 	public void setVel(double mVel) {
 		this.mVel = mVel;
 	}
-	protected void randomizeDirection()
-	{
-		mdX = mRandom.nextDouble()*2-1;
-		mdY = mRandom.nextDouble()*2-1;
+	
+	protected void randomizeDirection()	{
+		mdV = new Vector2f(mRandom.nextFloat()*2-1, mRandom.nextFloat()*2-1);
 	}
 	
-	protected void randomizeVelocity()
-	{
+	protected void randomizeVelocity()	{
 		mVel = mRandom.nextDouble();
 	}
 	
-	protected void resetPos()
-	{
-		mX = World.getMidX();
-		mY = World.getMidY();
+	protected void resetPos()	{
+		mPos = new Vector2f((float)World.getMidX(),(float) World.getMidY());
 	}
 
 	protected boolean isInBounds()
@@ -89,37 +86,65 @@ public class Object implements Drawable,Processable{
 			if(getShape().getPoint(i).y>yMax)
 				yMax=getShape().getPoint(i).y;
 		}
-		if((mX+xMax)<(2*World.getMidX()) && (mY+yMax)<(2*World.getMidY()) && (mY-yMin)>0 && (mX-xMin)>0)
+		if((mPos.x+xMax)<(2*World.getMidX()) && (mPos.y+yMax)<(2*World.getMidY()) && (mPos.y-yMin)>0 && (mPos.x-xMin)>0)
 			return true;
 		return false;
 	}
 	
-	protected void onOutOfBounds()
-	{
-		bounce();
+	protected Vector2f findNormalIfOutOfBounds() {
+		double xMin=(World.getMidX())*2;
+		double xMax=0;
+
+		double yMin=(World.getMidY())*2;
+		double yMax=0;
+	
+		for (int i=0;i<getShape().getPointCount();i++){
+			
+			if (getShape().getPoint(i).x<xMin) {
+				xMin=getShape().getPoint(i).x;
+			}
+			if (getShape().getPoint(i).x>xMax) {
+				xMax=getShape().getPoint(i).x;
+			}
+			if (getShape().getPoint(i).y<yMin){
+				yMin=getShape().getPoint(i).y;
+			}
+			if (getShape().getPoint(i).y>yMax) {
+				yMax=getShape().getPoint(i).y;
+			}
+		}
+		
+		if (mPos.x - xMin < 0) {
+			return new Vector2f(-1, 0);
+		}
+		if (mPos.y - yMin < 0) {
+			return new Vector2f(0, -1);
+		}
+		if (mPos.x + xMax > 2*World.getMidX()) {
+			return new Vector2f(1, 0);
+		}
+		if (mPos.y + yMax > 2*World.getMidY()) {
+			return new Vector2f(0, 1);
+		}
+		return new Vector2f(0,0);
+	}
+	
+	protected void onOutOfBounds(Vector2f normal)	{
+		bounce(normal);
 		//resetPos();
 		//randomizeDirection();
 		randomizeVelocity();
 	}
 	
-	protected double dot(double a1, double a2, double b1, double b2){
-		return a1*b1+a2*b2;
-	}
-
-	protected void bounce(){
-	
-		mdX = -mdX;
-		mdY = -mdY;
-	}
 	
 	protected void bounce(Vector2f normal){
 	
-		double newdX = mdX - 2*dot(mdX, mdY, normal.x, normal.y)*normal.x;
-		double newdY = mdY - 2*dot(mdX, mdY, normal.x, normal.y)*normal.y;
+		double kappa = 2*MathUtil.dot(mdV, normal);
 		
-		Vector2f newV = new Vector2f((float)newdX, (float)newdY);
-		mdX = newV.x;
-		mdY = newV.y;
+		mdV = sub(mdV, mul(normal, (float) kappa));
+		
+		//mdV = newV;
+		
 	}
 	
 	protected double getRadius(){
@@ -130,33 +155,22 @@ public class Object implements Drawable,Processable{
 	protected Vector2f getPosition(){
 		return this.getShape().getPosition();
 	}
+	
 	protected void updateShapePosition(){
-
-		getShape().setPosition((float)mX, (float)mY);
+		getShape().setPosition(mPos);
 		mCollidableShape.setShapePosition(getPosition());
 	}
 	
-	public double getX() {
-		return mX;
-	}
-	public void setX(double mX) {
-		this.mX = mX;
-	}
-	public double getY() {
-		return mY;
-	}
-	public void setY(double mY) {
-		this.mY = mY;
-	}
+	
 	@Override
 	public void process(double timestep) {
 		if(!isInBounds())
 		{
-			onOutOfBounds();
+			onOutOfBounds(findNormalIfOutOfBounds());
 		}
+		
+		mPos = add(mPos, mul(mdV, (float) (mVel*timestep)));
 
-		mX += timestep * mdX * mVel;
-		mY += timestep * mdY * mVel;
 		updateShapePosition();
 	}
 
@@ -170,7 +184,6 @@ public class Object implements Drawable,Processable{
 	}
 	
 	public CollidableShape getCollidableShape(){
-
 		return mCollidableShape;
 	}
 	

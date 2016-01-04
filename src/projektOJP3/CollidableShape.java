@@ -1,3 +1,9 @@
+/*
+ * hortensja
+ *
+ * neurological disorders v. 0.99
+ */
+
 package projektOJP3;
 
 import java.util.ArrayList;
@@ -14,38 +20,43 @@ public class CollidableShape {
 	private final Vector2f[] mNormals;
 	private Vector2f mShapePosition;
 	
-	private double vectorLength(Vector2f v){
-		return Math.sqrt(v.x*v.x+v.y*v.y);
-	}
 	
 	public CollidableShape(Shape shape) {
-		
-		mPoints = shape.getPoints();
+
+		mPoints = new Vector2f[shape.getPointCount()];
 		mNormals = new Vector2f[shape.getPointCount()];
+		
+		float rotation = (float) (shape.getRotation()*Math.PI/180);
+		
+		Matrix2x2f rotationMatrix = MathUtil.getRotationMatrix(rotation);
+		
+		for(int i=0;i<shape.getPointCount();i++){
+			mPoints[i] = MathUtil.matVecMul(rotationMatrix, shape.getPoint(i));
+
+			//System.out.println("pkty: " + mPoints[i]);	
+		}
+		
 		for(int i=0;i<shape.getPointCount();i++){
 			Vector2f vector = sub(mPoints[i], mPoints[(i+1)%shape.getPointCount()]);
 			mNormals[i] = new Vector2f(-vector.y, vector.x);
-			mNormals[i] = div(mNormals[i], (float)vectorLength(mNormals[i]));
+			mNormals[i] = div(mNormals[i], (float)MathUtil.vectorLength(mNormals[i]));
 		}
 		
-		mShapePosition = shape.getPosition();
+		mShapePosition = sub(shape.getPosition(), shape.getOrigin());
 	}
 	
 	public void setShapePosition(Vector2f v){
 		mShapePosition = v;
 	}
 	
-	public static double dot(Vector2f v1, Vector2f v2){
-		return v1.x*v2.x+v1.y*v2.y;
-	}
 	
 	protected boolean areColliding(Vector2f v){
 
 		double oneDot;
 		for (int i=0;i<mNormals.length;i++){
 
-			oneDot = dot(mNormals[i], add(mPoints[i], mShapePosition));
-			if (dot(mNormals[i],v)>oneDot)
+			oneDot = MathUtil.dot(mNormals[i], add(mPoints[i], mShapePosition));
+			if (MathUtil.dot(mNormals[i],v)>oneDot)
 				return false;
 		}
 		
@@ -55,9 +66,9 @@ public class CollidableShape {
 	protected double maximalDotProduct(Vector2f normal, Vector2f originPoint, CollidableShape cs){
 		double maximum = Double.NEGATIVE_INFINITY;
 		double currentDot = 0.0;
-		double oneDot = dot(normal, originPoint);
+		double oneDot = MathUtil.dot(normal, originPoint);
 		for(int i=0; i<cs.mPoints.length;i++){
-			currentDot = -dot(normal, add(cs.mPoints[i], cs.mShapePosition)) + oneDot; 
+			currentDot = -MathUtil.dot(normal, add(cs.mPoints[i], cs.mShapePosition)) + oneDot; 
 			if (currentDot>maximum){
 				maximum = currentDot;
 			}

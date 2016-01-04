@@ -1,3 +1,9 @@
+/*
+ * hortensja
+ *
+ * neurological disorders v. 0.99
+ */
+
 package projektOJP3;
 
 import java.util.ArrayList;
@@ -9,10 +15,11 @@ import org.jsfml.system.Vector2f;
 public class World implements Drawable, Processable{
 
 
-	private final ArrayList<Object> mObjects = new ArrayList<>() ;
+	private final ArrayList<Object> mObjects = new ArrayList<>();
+	private final ArrayList<Object> mPersons = new ArrayList<>();
 	
-	private static int midX = 540;
-	private static int midY = 360;
+	private static int midX;
+	private static int midY;
 	
 	private Random mRandom = new Random(System.nanoTime());
 	private int maxNumberOfObjects = 10;
@@ -27,22 +34,28 @@ public class World implements Drawable, Processable{
 		return o;
 	}
 	
-	public World(){
+	public World(RenderWindow window){
+		midX = window.getSize().x/2;
+		midY = window.getSize().y/2;
+		
+		//addObject()
+		
 		int numberOfTrees = mRandom.nextInt(maxNumberOfObjects)+1;
 		int numberOfWalls = mRandom.nextInt(maxNumberOfObjects)+1;
 		Object o;
 		for(int i=0;i<numberOfTrees;i++){
-			do{
+			do {
 				o = generateTrees(mRandom.nextInt(midX*2), mRandom.nextInt(midY*2));
-			}while(isCollidingWithAnything(o));
+			} while(isCollidingWithAnything(o));
 			addObject(o);
 		}
 		for(int i=0;i<numberOfWalls;i++){
-			do{
+			do {
 				o = generateWalls(mRandom.nextInt(midX*2), mRandom.nextInt(midY*2));
-			}while(isCollidingWithAnything(o));
+			} while(isCollidingWithAnything(o));
 			addObject(o);
 		}
+		System.out.println(midX+ " " + midY);
 	}
 	
 	protected boolean isCollidingWithAnything(Object o){
@@ -85,38 +98,44 @@ public class World implements Drawable, Processable{
 		for(Object object : mObjects) { 
 			object.draw(window);
 		}
+		for (Object person : mPersons){
+			person.draw(window);
+		}
 	}
 
 	@Override
 	public void process(double timestep) {
-		int i = 1;
 		for(Object object : mObjects) {
 			object.process(timestep);
+		}
+		
+		int i = 1;
+		
+		for (Object person : mPersons) {
+			person.process(timestep);
 
-			for(int j=i; j<mObjects.size();j++){
-				Object object2 = mObjects.get(j);
-				if (Collision.areCollidingBetterTest(object, object2)){
-					Vector2f normal1 = object.getCollidableShape().minimalDistanceNormal(object2.getCollidableShape());
-					Vector2f normal2 = object2.getCollidableShape().minimalDistanceNormal(object.getCollidableShape());
-				
-					if(CollidableShape.dot(new Vector2f((float) object.getdX(), (float) object.getdY()), normal2)<0){
-						object.bounce(normal2);
-						System.out.println("baunsuje o: " + normal2);
-						//object2.bounce(normal1);
-					}
-					if(CollidableShape.dot(new Vector2f((float) object2.getdX(), (float) object2.getdY()), normal1)<0){
-						object.bounce(normal2);
-						object2.bounce(normal1);
-						//System.out.println("baunsuje o: " + normal1);
-					}
+			for(Object object : mObjects) {
+				if (Collision.areCollidingBetterTest(object, person)){
+					Collision.collide(object, person);
+				}
+			}
+
+			for(int j=i; j<mPersons.size();j++){
+				Object person2 = mPersons.get(j);
+				if (Collision.areCollidingBetterTest(person, person2)){
+					Collision.collide(person, person2);
 				}
 			}
 			i++;
 		}
-		
 	}
-	public void addObject(Object object)
-	{
+	
+	
+	public void addObject(Object object) {
 		mObjects.add(object);
+	}
+
+	public void addPerson(Person person) {
+		mPersons.add(person);
 	}
 }

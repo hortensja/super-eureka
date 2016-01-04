@@ -1,3 +1,9 @@
+/*
+ * hortensja
+ *
+ * neurological disorders v. 0.99
+ */
+
 package projektOJP3;
 
 import java.util.Random;
@@ -12,36 +18,36 @@ public class ShapeGenerator {
 
 private static Random rand = new Random(System.nanoTime());
 	
-	private ShapeGenerator() {
-		
-	}
+	private ShapeGenerator() {}
 	
 	public static Shape generateShape(){
-		Shape shape = new CircleShape((int)( rand.nextDouble()*100+1),(int) (rand.nextDouble()*10+3));
+		Shape shape = new CircleShape(100,4);
 		org.jsfml.graphics.Color color = new org.jsfml.graphics.Color((int)(rand.nextDouble()*255),(int)(rand.nextDouble()*255), (int)(rand.nextDouble()*255));
-		//color.
 		shape.setFillColor(color);
 		return shape;
 	}
 	
-	public static Shape generatePie(double r, double angle1, double angle2){
+	
+	public static Shape generatePie(double r, double angle){
 		
 		ConvexShape cshape = new ConvexShape();
-		double angle = angle1;
-		cshape.setPointCount((int)(Math.abs(angle2-angle1)/(Math.PI/24)+1));
+		double temp = 0;
+		cshape.setPointCount((int)(Math.abs(angle)/(Math.PI/24)+1));
+		//cshape.setPointCount(3);
 		org.jsfml.graphics.Color color = new org.jsfml.graphics.Color((int)(rand.nextDouble()*255),(int)(rand.nextDouble()*255), (int)(rand.nextDouble()*255));
 				
 		cshape.setPoint(0, org.jsfml.system.Vector2f.ZERO);
 		
 		for (int i=1;i<cshape.getPointCount();i++){
-			cshape.setPoint(i, new Vector2f((float)(r*Math.cos(angle)),(float)(r*Math.sin(angle))));
-			angle+=(angle2-angle1)/(cshape.getPointCount()-2);
+			cshape.setPoint(i, new Vector2f((float)(r*Math.cos(temp)),(float)(r*Math.sin(temp))));
+			temp+=(angle)/(cshape.getPointCount()-2);
 		}
 		
 		cshape.setFillColor(color);
-		
+				
 		return cshape;
 	}
+	
 
 	public static Shape generateTree(double r){
 		
@@ -58,5 +64,6 @@ private static Random rand = new Random(System.nanoTime());
 		shape.setFillColor(color);
 		return shape;
 	}
+	
 	
 }

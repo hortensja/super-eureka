@@ -1,27 +1,38 @@
+/*
+ * hortensja
+ *
+ * neurological disorders v. 0.99
+ */
+
 package projektOJP3;
+
+import static org.jsfml.system.Vector2f.mul;
+import static org.jsfml.system.Vector2f.sub;
 
 import org.jsfml.graphics.CircleShape;
 import org.jsfml.graphics.RenderWindow;
 import org.jsfml.graphics.Shape;
+import org.jsfml.system.Vector2f;
 
 public class Person extends Object {
 
-	//private Shape mPersonShape = new CircleShape(15);
-	private double mRadiusOfVision = 100;
+	private double mRadiusOfVision = 60;
 	private double mAngleOfVision = 140*Math.PI/180;
+	private double mLeftVisionAngle = 70*Math.PI/180;
+	//K¥T ZERO JEST POZIOMO
 	
 	private Shape mVision;
 	private org.jsfml.graphics.Color mVisionColor = new org.jsfml.graphics.Color(120,120,120);
 	
-	public Person(double x, double y) {
+	public Person(double x, double y, Options o) {
 		super(x, y, new CircleShape(15));
+		this.getShape().setOrigin(15,15);
 		org.jsfml.graphics.Color color = new org.jsfml.graphics.Color(mRandom.nextInt(256),mRandom.nextInt(256),mRandom.nextInt(256));
 		this.getShape().setFillColor(color);
-		Shape vision = ShapeGenerator.generatePie(mRadiusOfVision, Math.atan2(getdY(), getdX())+mAngleOfVision/2, Math.atan2(getdY(), getdX())-mAngleOfVision/2);
-		//color = new org.jsfml.graphics.Color(mRandom.nextInt(256),mRandom.nextInt(256),mRandom.nextInt(256));
+		Shape vision = ShapeGenerator.generatePie(mRadiusOfVision, mAngleOfVision);
 		vision.setFillColor(mVisionColor);
-		vision.setOrigin(getShape().getOrigin().x-30, getShape().getOrigin().y-30);
-		vision.setPosition((float)getX(), (float)getY());
+		vision.setPosition(getPos());
+		vision.setRotation((float) ((Math.atan2(getdV().y, getdV().x)-mLeftVisionAngle)*180/Math.PI));
 		this.mVision = vision;
 	}
 
@@ -48,17 +59,16 @@ public class Person extends Object {
 	@Override
 	protected void updateShapePosition(){
 		super.updateShapePosition();
-		//mVision.setOrigin(getShape().getOrigin().x-15, getShape().getOrigin().y-15);
-		//mVision.setPosition((float)getX(), (float)getY());
-		// 0 jest pionowo w dó³
-		double theta = Math.atan2(getdY(), getdX());
-		Shape vision = ShapeGenerator.generatePie(mRadiusOfVision,theta-mAngleOfVision/2, theta+mAngleOfVision/2);// Math.atan2(getdY(), getdX())-mAngleOfVision/2, Math.atan2(getdY(), getdX())+mAngleOfVision/2);
-		vision.setFillColor(mVisionColor);
-		vision.setOrigin(getShape().getOrigin().x-15, getShape().getOrigin().y-15);
-		vision.setPosition((float)getX(), (float)getY());
-		this.mVision = vision;
+		mVision.setPosition(getPos());	
 	}
 
+	@Override
+	protected void bounce(Vector2f normal){
+		super.bounce(normal);
+		double theta = Math.atan2(getdV().y, getdV().x)*180/Math.PI;
+		mVision.setRotation((float) ((Math.atan2(getdV().y, getdV().x)-mLeftVisionAngle)*180/Math.PI));
+		//mVision.setOrigin(getShape().getOrigin().x-15, getShape().getOrigin().y-15);
+	}
 
 	@Override
 	public void draw(RenderWindow window) {
@@ -67,5 +77,13 @@ public class Person extends Object {
 		
 	}
 	
+	@Override
+	public CollidableShape getCollidableShape(){
+		return new CollidableShape(mVision);
+	}
 	
+//	@Override
+//	public Shape getShape() {
+//		return mVision;
+//	}
 }
