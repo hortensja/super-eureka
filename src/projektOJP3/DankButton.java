@@ -9,8 +9,8 @@ public class DankButton extends Button {
 	private static Random mDankRandom = new Random();
 	
 	
-	public DankButton(Vector2f size, Vector2f pos, Text text) {
-		super(size, pos, text);
+	public DankButton(Vector2f size, Vector2f pos, Text name) {
+		super(size, pos, name);
 	}
 	
 	@Override

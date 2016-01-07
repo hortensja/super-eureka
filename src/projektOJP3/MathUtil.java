@@ -1,10 +1,13 @@
 package projektOJP3;
 
 import org.jsfml.system.Vector2f;
+import static org.jsfml.system.Vector2f.*;
 
 public class MathUtil {
 
 
+	private MathUtil(){}
+	
 	public static double dot(Vector2f v1, Vector2f v2){
 		return v1.x*v2.x+v1.y*v2.y;
 	}
@@ -21,5 +24,10 @@ public class MathUtil {
 	
 	public static Matrix2x2f getRotationMatrix(float theta){
 		return new Matrix2x2f((float) Math.cos(theta), (float) -Math.sin(theta), (float) Math.sin(theta), (float) Math.cos(theta));
+	}
+	
+	public static Vector2f normalizeVector(Vector2f v){
+		double length = vectorLength(v);
+		return mul(v, (float) (1/length));
 	}
 }

@@ -4,8 +4,8 @@ import org.jsfml.graphics.Text;
 import org.jsfml.system.Vector2f;
 
 public class SuperDankButton extends DankButton {
-	public SuperDankButton(Vector2f size, Vector2f pos, Text text) {
-		super(size, pos, text);
+	public SuperDankButton(Vector2f size, Vector2f pos, Text name) {
+		super(size, pos, name);
 	}
 	
 	@Override

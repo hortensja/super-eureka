@@ -6,13 +6,15 @@
 
 package projektOJP3;
 
-import static org.jsfml.system.Vector2f.mul;
-import static org.jsfml.system.Vector2f.sub;
+import static org.jsfml.system.Vector2f.*;
 
 import org.jsfml.graphics.CircleShape;
+import org.jsfml.graphics.Color;
 import org.jsfml.graphics.RenderWindow;
 import org.jsfml.graphics.Shape;
 import org.jsfml.system.Vector2f;
+import org.jsfml.system.Vector2i;
+import org.jsfml.window.event.Event;
 
 public class Person extends Object {
 
@@ -29,6 +31,7 @@ public class Person extends Object {
 		this.getShape().setOrigin(15,15);
 		org.jsfml.graphics.Color color = new org.jsfml.graphics.Color(mRandom.nextInt(256),mRandom.nextInt(256),mRandom.nextInt(256));
 		this.getShape().setFillColor(color);
+		
 		Shape vision = ShapeGenerator.generatePie(mRadiusOfVision, mAngleOfVision);
 		vision.setFillColor(mVisionColor);
 		vision.setPosition(getPos());
@@ -36,6 +39,7 @@ public class Person extends Object {
 		this.mVision = vision;
 	}
 
+	
 
 	public double getRadiusOfVision() {
 		return mRadiusOfVision;
@@ -68,15 +72,27 @@ public class Person extends Object {
 		updateVisionRotation();
 	}
 	
-	protected void turn(Vector2f normal){
-		//super.bounce(normal);
-
-		double kappa = 0.1*MathUtil.dot(getdV(), normal);
+	protected void turn(double distance, Vector2f normal) {
+		/*Matrix2x2f m = MathUtil.getRotationMatrix((float) (Math.PI/2));
+		Vector2f turnVector = MathUtil.matVecMul(m, normal);
+		
+		double kappa = 10000/(distance*distance);//MathUtil.dot(getdV(), turnVector);///(distance*distance);
+		kappa = 0.2*MathUtil.dot(getdV(), normal);
+		double originaldVLength = getdVMod();
+		Vector2f newdV = sub(getdV(), mul(normal, (float) kappa));
+		//Vector2f newdV = add(getdV(), mul(turnVector, (float) kappa));
+		double newdVLength = MathUtil.vectorLength(newdV);
+		//setdV(newdV);
+		//setdV(mul(newdV, (float) (0.9*originaldVLength/newdVLength)));
+*/		
+		
+		double kappa = 0.15*MathUtil.dot(getdV(), normal);///distance;
 		double originaldVLength = getdVMod();
 		Vector2f newdV = sub(getdV(), mul(normal, (float) kappa));
 		double newdVLength = MathUtil.vectorLength(newdV);
-		setdV(mul(newdV, (float) (originaldVLength/newdVLength)));	
+		//setdV(mul(newdV, (float) (originaldVLength/newdVLength)));	
 		//setVel(2*getVel());
+		setdV(newdV);
 		updateVisionRotation();
 	}
 
@@ -84,8 +100,9 @@ public class Person extends Object {
 	public void draw(RenderWindow window) {
 		window.draw(getShape());
 		window.draw(mVision);
-		
 	}
+	
+
 	
 	protected void updateVisionRotation(){
 		mVision.setRotation((float) ((Math.atan2(getdV().y, getdV().x)-mLeftVisionAngle)*180/Math.PI));		
@@ -100,8 +117,4 @@ public class Person extends Object {
 		return new CollidableShape(mVision);
 	}
 	
-//	@Override
-//	public Shape getShape() {
-//		return mVision;
-//	}
 }

@@ -39,29 +39,62 @@ public class CollidableShape {
 		for(int i=0;i<shape.getPointCount();i++){
 			Vector2f vector = sub(mPoints[i], mPoints[(i+1)%shape.getPointCount()]);
 			mNormals[i] = new Vector2f(-vector.y, vector.x);
-			mNormals[i] = div(mNormals[i], (float)MathUtil.vectorLength(mNormals[i]));
+			mNormals[i] = MathUtil.normalizeVector(mNormals[i]);//div(mNormals[i], (float)MathUtil.vectorLength(mNormals[i]));
 		}
 		
 		mShapePosition = sub(shape.getPosition(), shape.getOrigin());
 	}
 	
-	public void setShapePosition(Vector2f v){
+	protected void setShapePosition(Vector2f v){
 		mShapePosition = v;
 	}
 	
 	
 	protected boolean areColliding(Vector2f v){
-
 		double oneDot;
 		for (int i=0;i<mNormals.length;i++){
-
 			oneDot = MathUtil.dot(mNormals[i], add(mPoints[i], mShapePosition));
-			if (MathUtil.dot(mNormals[i],v)>oneDot)
+			if (MathUtil.dot(mNormals[i],v)>oneDot){
 				return false;
+			}
 		}
-		
 		return true;	
 	}
+
+	public boolean areColliding(CollidableShape cs2){
+		for (int i=0;i<cs2.mPoints.length;i++){
+			if (areColliding(add(cs2.mPoints[i],cs2.mShapePosition))){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	
+	
+	public Vector2f findSomeCollidingPoint(CollidableShape cs){
+		double oneDot;
+		for (int j=0;j<cs.mPoints.length;j++){
+			for (int i=0;i<mNormals.length;i++){
+				oneDot = MathUtil.dot(mNormals[i], add(mPoints[i], mShapePosition));
+				if (MathUtil.dot(mNormals[i],add(cs.mPoints[j],cs.mShapePosition))>oneDot){
+					return add(add(div(new Vector2f(mNormals[i].y, -mNormals[i].x), 2), mPoints[(i+1)%mPoints.length]), mShapePosition);
+				}
+			}
+		}
+		for (int j=0;j<mPoints.length;j++){
+			for (int i=0;i<cs.mNormals.length;i++){
+				oneDot = MathUtil.dot(cs.mNormals[i], add(cs.mPoints[i], cs.mShapePosition));
+				if (MathUtil.dot(cs.mNormals[i],add(mPoints[j],mShapePosition))>oneDot){
+					return add(add(div(new Vector2f(cs.mNormals[i].y, -cs.mNormals[i].x), 2), cs.mPoints[(i+1)%cs.mPoints.length]), cs.mShapePosition);					
+				}
+			}
+		}
+		return null;
+	}
+	
+	
 	
 	protected double maximalDotProduct(Vector2f normal, Vector2f originPoint, CollidableShape cs){
 		double maximum = Double.NEGATIVE_INFINITY;
@@ -90,15 +123,5 @@ public class CollidableShape {
 		return mNormals[minimumNormalPosition];
 	}
 	
-	public boolean areColliding(CollidableShape cs2){
-		
-		for (int i=0;i<cs2.mPoints.length;i++){
-			
-			if (areColliding(add(cs2.mPoints[i],cs2.mShapePosition)))
-				return true;
-		}
-		
-		return false;
-	}
 
 }

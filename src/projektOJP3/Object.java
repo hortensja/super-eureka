@@ -5,6 +5,9 @@ import java.util.Random;
 import org.jsfml.graphics.RenderWindow;
 import org.jsfml.graphics.Shape;
 import org.jsfml.system.Vector2f;
+import org.jsfml.system.Vector2i;
+import org.jsfml.window.event.Event;
+
 import static org.jsfml.system.Vector2f.*;
 
 public class Object implements Drawable,Processable{
@@ -37,7 +40,7 @@ public class Object implements Drawable,Processable{
 		return mdV;
 	}
 	public void setdV(Vector2f mdV) {
-		this.mdV = mdV;
+		this.mdV = MathUtil.normalizeVector(mdV);
 	}
 	public Vector2f getPos() {
 		return mPos;
@@ -59,11 +62,11 @@ public class Object implements Drawable,Processable{
 	}
 	
 	protected void randomizeDirection()	{
-		mdV = new Vector2f(mRandom.nextFloat()*2-1, mRandom.nextFloat()*2-1);
+		mdV = MathUtil.normalizeVector(new Vector2f(mRandom.nextFloat()*2-1, mRandom.nextFloat()*2-1));
 	}
 	
 	protected void randomizeVelocity()	{
-		mVel = mRandom.nextDouble();
+		mVel = mRandom.nextDouble()+0.1;
 	}
 	
 	protected void resetPos()	{
@@ -143,7 +146,7 @@ public class Object implements Drawable,Processable{
 	protected void bounce(Vector2f normal){
 	
 		double kappa = 2*MathUtil.dot(mdV, normal);		
-		mdV = sub(mdV, mul(normal, (float) kappa));	
+		mdV = sub(mdV, mul(normal, (float) kappa));// MathUtil.normalizeVector(sub(mdV, mul(normal, (float) kappa)));
 	}
 	
 	protected double getRadius(){
@@ -155,6 +158,13 @@ public class Object implements Drawable,Processable{
 		return this.getShape().getPosition();
 	}
 	
+	public Vector2f getCenter(){
+		double h = this.getShape().getGlobalBounds().height;
+		double w = this.getShape().getGlobalBounds().width;
+		
+		return Vector2f.add(mShape.getPosition(), new Vector2f((float)w/2, (float)h/2));
+		
+	}
 	protected void updateShapePosition(){
 		getShape().setPosition(mPos);
 		mCollidableShape.setShapePosition(getPosition());
@@ -171,6 +181,7 @@ public class Object implements Drawable,Processable{
 		mPos = add(mPos, mul(mdV, (float) (mVel*timestep)));
 
 		updateShapePosition();
+		
 	}
 
 	@Override
@@ -186,4 +197,24 @@ public class Object implements Drawable,Processable{
 		return mCollidableShape;
 	}
 	
+	protected Event processEvent(Event e) {
+		
+		if(e.type == Event.Type.MOUSE_BUTTON_PRESSED) {
+			Vector2i click = e.asMouseButtonEvent().position;
+			Vector2f clickf = new Vector2f(click.x,click.y);
+			if(this.getCollidableShape().areColliding(clickf)) {
+				onClick();
+			return null;
+			}
+		}
+		return e;
+	}
+	
+
+	protected void onClick(){
+		resetPos();
+		randomizeDirection();
+		randomizeVelocity();
+	}
+		
 }

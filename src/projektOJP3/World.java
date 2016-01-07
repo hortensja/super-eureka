@@ -12,6 +12,7 @@ import java.util.Random;
 import org.jsfml.graphics.RectangleShape;
 import org.jsfml.graphics.RenderWindow;
 import org.jsfml.system.Vector2f;
+import org.jsfml.window.event.Event;
 
 public class World implements Drawable, Processable{
 
@@ -22,11 +23,13 @@ public class World implements Drawable, Processable{
 	private static int midX;
 	private static int midY;
 	
+
+	private Options mOptions;
 	private Random mRandom = new Random(System.nanoTime());
 	private int maxNumberOfObjects = 10;
 	
 	private Object generateTrees(double x, double y){
-		Object o = new ImmovableObject(x, y,ShapeGenerator.generateTree(50));
+		Object o = new ImmovableObject(x, y,ShapeGenerator.generateTree(mRandom.nextDouble()*80+20));
 		return o;
 	}
 
@@ -35,9 +38,11 @@ public class World implements Drawable, Processable{
 		return o;
 	}
 	
-	public World(RenderWindow window){
+	public World(RenderWindow window, Options options){
 		midX = window.getSize().x/2;
 		midY = window.getSize().y/2;
+		
+		mOptions = options;
 		
 		//adding bounds just in case
 		addObject(new ImmovableObject(0, -1, ShapeGenerator.generateRect(2*midX, 1)));
@@ -110,6 +115,9 @@ public class World implements Drawable, Processable{
 
 	@Override
 	public void process(double timestep) {
+		
+		 
+		
 		for(Object object : mObjects) {
 			object.process(timestep);
 		}
@@ -133,6 +141,7 @@ public class World implements Drawable, Processable{
 				Object person1 = person;
 				Object person2 = mPersons.get(j);
 				Person person2prim = mPersons.get(j);
+				
 				if (Collision.areCollidingBetterTest(person1, person2)){
 					Collision.collideObjectWithObject(person1, person2);
 				} else if (Collision.areCollidingBetterTest(person.getCollidableVision(), person2.getCollidableShape())){
@@ -145,6 +154,15 @@ public class World implements Drawable, Processable{
 		}
 	}
 	
+	public Event processEvent(Event e){ 
+		for(Person person : mPersons){
+			if(e!=null)
+				e = person.processEvent(e);
+			else
+				return null;
+		}
+		return e;
+	}
 	
 	public void addObject(Object object) {
 		mObjects.add(object);

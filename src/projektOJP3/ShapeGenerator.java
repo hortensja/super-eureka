@@ -21,7 +21,7 @@ private static Random rand = new Random(System.nanoTime());
 	private ShapeGenerator() {}
 	
 	public static Shape generateShape(){
-		Shape shape = new CircleShape(100,4);
+		Shape shape = new CircleShape((float) rand.nextDouble()*50+10, rand.nextInt(9)+3);
 		org.jsfml.graphics.Color color = new org.jsfml.graphics.Color((int)(rand.nextDouble()*255),(int)(rand.nextDouble()*255), (int)(rand.nextDouble()*255));
 		shape.setFillColor(color);
 		return shape;
