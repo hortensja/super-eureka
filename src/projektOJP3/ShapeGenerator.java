@@ -32,6 +32,7 @@ private static Random rand = new Random(System.nanoTime());
 		
 		ConvexShape cshape = new ConvexShape();
 		double temp = 0;
+		//cshape.setPointCount(5);
 		cshape.setPointCount((int)(Math.abs(angle)/(Math.PI/24)+1));
 		//cshape.setPointCount(3);
 		org.jsfml.graphics.Color color = new org.jsfml.graphics.Color((int)(rand.nextDouble()*255),(int)(rand.nextDouble()*255), (int)(rand.nextDouble()*255));

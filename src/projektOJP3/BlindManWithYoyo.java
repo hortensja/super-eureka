@@ -38,9 +38,9 @@ public class BlindManWithYoyo {
 		OptionWindow windowWithOptions = new OptionWindow();
 		
 		window.create(new VideoMode(1080,720), "Neurological disorders");
-		
+		//window.create(VideoMode.getFullscreenModes()[0], "yoloyolo", RenderWindow.FULLSCREEN);
 		boolean paused = false;	
-		Options options = new Options(true, false);	
+		Options options = Options.DEFAULT_OPTIONS;	
 		World world = new World(window, options);
 		double timestep = 0.5;
 		/*Shape kwadrat = new RectangleShape(new Vector2f(10,10));
@@ -104,6 +104,9 @@ public class BlindManWithYoyo {
 		        	}
 		        	if(event.asKeyEvent().key == Keyboard.Key.DOWN){
 		        		timestep -= 0.05;
+		        	}
+		        	if(event.asKeyEvent().key == Keyboard.Key.ESCAPE) {
+		        		window.close();
 		        	}
 		        }
 		    }

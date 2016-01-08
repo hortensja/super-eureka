@@ -2,7 +2,9 @@ package projektOJP3;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.jsfml.graphics.Font;
 import org.jsfml.graphics.RenderWindow;
@@ -13,18 +15,14 @@ import org.jsfml.window.VideoMode;
 import org.jsfml.window.event.Event;
 
 public class OptionWindow implements Window{
-
-	private final ArrayList<Button> mButtons = new ArrayList<>();
 	
 	private final RenderWindow mWindow = new RenderWindow();
 
 	private org.jsfml.graphics.Font mFont = new Font();
 	private static Vector2f mStandardSize = new Vector2f(150, 50);
 	
+	private Map<Disorder, Button> mButtons = new HashMap<>();
 	
-	private BooleanButton mMyopia;
-	private BooleanButton mHyperopia;
-	private BooleanButton mCerebellum;
 	
 	public OptionWindow(){
 		mWindow.create(new VideoMode(200, 720), "Options");
@@ -34,14 +32,15 @@ public class OptionWindow implements Window{
 		
 		Vector2f pos = new Vector2f(10,10);
 		
-		mMyopia = new BooleanButton(mStandardSize, pos, new Text("Myopia", mFont));
-		mHyperopia = new BooleanButton(mStandardSize, pos = getNextButtonPosition(mMyopia.getSize(), pos), new Text("Hyperopia", mFont));
-		mCerebellum = new BooleanButton(mStandardSize, pos = getNextButtonPosition(mHyperopia.getSize(), pos), new Text("Cerebellum", mFont));
+		BooleanButton myopia = new BooleanButton(mStandardSize, pos, new Text("Myopia", mFont));
+		BooleanButton hyperopia = new BooleanButton(mStandardSize, pos = getNextButtonPosition(myopia.getSize(), pos), new Text("Hyperopia", mFont));
+		BooleanButton cerebellum = new BooleanButton(mStandardSize, pos = getNextButtonPosition(hyperopia.getSize(), pos), new Text("Cerebellum", mFont));
 
 		
-		addButton(mMyopia);
-		addButton(mHyperopia);
-		addButton(mCerebellum);
+		mButtons.put(new Disorder("Myopia"), myopia);
+		mButtons.put(new Disorder("Hyperopia"), hyperopia);
+		mButtons.put(new Disorder("Cerebellum"), cerebellum);
+		
 	}
 	
 
@@ -61,24 +60,20 @@ public class OptionWindow implements Window{
 	          close();
 	        }
 	        
-	        for(Button button : mButtons){
-	        	button.processEvent(event);
+	        for(Entry<Disorder, Button> button : mButtons.entrySet()){
+	        	button.getValue().processEvent(event);
 	        }
 	    }
 	}
-	
-	public void addButton(Button button){
-		mButtons.add(button);
-	}
-	
+
 	public void clear(org.jsfml.graphics.Color color){
 		mWindow.clear(color);
 	}
 	
 	public void display(){
 
-        for(Button button : mButtons){
-        	button.draw(mWindow);
+        for(Entry<Disorder, Button> button : mButtons.entrySet()){
+        	button.getValue().draw(mWindow);
         }
 		mWindow.display();
 	}
@@ -93,7 +88,12 @@ public class OptionWindow implements Window{
 	}
 
 	public Options getOptions() {
-		return new Options(mMyopia.getStatus(), mHyperopia.getStatus());
+		try {
+			return new Options(mButtons);
+		} catch (OptionsException e) {
+			e.printStackTrace();
+			return Options.DEFAULT_OPTIONS;
+		}
 	}
 	
 	

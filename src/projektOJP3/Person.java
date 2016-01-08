@@ -24,13 +24,20 @@ public class Person extends Object {
 	//K¥T ZERO JEST POZIOMO
 	
 	private Shape mVision;
-	private org.jsfml.graphics.Color mVisionColor = new org.jsfml.graphics.Color(180,180,180);
+	private org.jsfml.graphics.Color mVisionColor = new org.jsfml.graphics.Color(180,180,180,180);
 	
 	public Person(double x, double y, Options o) {
 		super(x, y, new CircleShape(15));
 		this.getShape().setOrigin(15,15);
 		org.jsfml.graphics.Color color = new org.jsfml.graphics.Color(mRandom.nextInt(256),mRandom.nextInt(256),mRandom.nextInt(256));
 		this.getShape().setFillColor(color);
+		
+		if (o.isMyopic) {
+			mRadiusOfVision *= 0.5;
+		} else if (o.isHyperopic) {
+			mRadiusOfVision *= 1.5;
+		}		
+		
 		
 		Shape vision = ShapeGenerator.generatePie(mRadiusOfVision, mAngleOfVision);
 		vision.setFillColor(mVisionColor);
@@ -45,16 +52,13 @@ public class Person extends Object {
 		return mRadiusOfVision;
 	}
 
-
 	public void setRadiusOfVision(double mRadiusOfVision) {
 		this.mRadiusOfVision = mRadiusOfVision;
 	}
 
-
 	public double getAngleOfVision() {
 		return mAngleOfVision;
 	}
-
 
 	public void setAngleOfVision(double mAngleOfVision) {
 		this.mAngleOfVision = mAngleOfVision;

@@ -50,6 +50,15 @@ public class World implements Drawable, Processable{
 		addObject(new ImmovableObject(-1, 0, ShapeGenerator.generateRect(1, 2*midY)));
 		addObject(new ImmovableObject(2*midX+1, 0, ShapeGenerator.generateRect(1, 2*midY)));
 		
+		
+		addObject(new ImmovableObject(midX*0.75, midY*0.75, ShapeGenerator.generateRect((float)0.5*midX,(float) 10)));
+		addObject(new ImmovableObject(midX*0.75, midY*1.25, ShapeGenerator.generateRect((float)0.5*midX, (float)10)));
+		addObject(new ImmovableObject(midX*1.25, midY*0.75, ShapeGenerator.generateRect(10, (float)0.5*midY)));
+		addObject(new ImmovableObject(midX*0.75, midY*0.75, ShapeGenerator.generateRect((float)10, (float)0.5*midY)));
+		
+		
+		
+		
 		int numberOfTrees = mRandom.nextInt(maxNumberOfObjects)+1;
 		int numberOfWalls = mRandom.nextInt(maxNumberOfObjects)+1;
 		Object o;

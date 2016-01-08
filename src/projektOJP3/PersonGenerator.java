@@ -6,11 +6,12 @@ public class PersonGenerator {
 	
 
 	public static Person generatePerson(double x, double y, Options o){
-		//if (o.get == sdgd){
-			Person p = new Person(x, y, o);
-			//} else {
-			//Person p = new DrunkPerson(x, y, o);
-			//}
+		Person p;
+		if (o.isCerebellar == false){
+			p = new Person(x, y, o);
+			} else {
+			p = new CerebellarPerson(x, y, o);
+			}
 		return p;
 	}
 	

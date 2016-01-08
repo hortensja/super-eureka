@@ -18,10 +18,16 @@ public class BooleanButton extends Button{
 	public boolean getStatus() {
 		return mStatus;
 	}
+	
 	@Override
 	protected void onClicked() {
 		mStatus = !mStatus;
 		super.onClicked();
 	}
-	
+
+	@Override
+	protected void onUnclicked() {
+		mStatus = !mStatus;
+		super.onUnclicked();
+	}
 }

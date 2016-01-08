@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="H:/Programy dosłownie/ProjektOJP/lib/jsfml.jar">
+	<classpathentry kind="lib" path="D:/Programy dosłownie/ProjektOJP/lib/jsfml.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="file:/D:/Pobrane/jsfml-test-Dec02_2013/javadoc/"/>
 		</attributes>
