@@ -20,8 +20,6 @@ import org.jsfml.window.event.Event;
 
 public class Button {
 
-
-
 	private Vector2f mSize;
 	protected final Shape mShape;
 
@@ -30,14 +28,14 @@ public class Button {
 	protected CollidableShape mCollidableShape;
 	protected boolean mIsClicked = false;
 	protected boolean mIsMouseOver = false;
+	protected Text mName;
+
 
 	protected Color mDefaultColor = Color.WHITE;
 	protected Color mDefaultTextColor = Color.BLACK;
 	protected Color mClickedColor = Color.BLUE;
 	protected Color mOnMouseOverColor = new Color(200, 255, 255);
 
-
-	private Text mName;
 
 	public Button(Vector2f size, Vector2f pos, Text name) {
 		mSize = size;

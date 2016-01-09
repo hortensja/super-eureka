@@ -42,7 +42,7 @@ public class Person extends Object {
 		}		
 		if (o.isLeftEyeDisabled && o.isRightEyeDisabled){
 			mRadiusOfVision = 10;
-			mVisionColor = new org.jsfml.graphics.Color(255,255,255,200);
+			mVisionColor = new org.jsfml.graphics.Color(255,255,255,0);
 		} else if (o.isRightEyeDisabled){
 			mAngleOfVision /= 2;
 			mLeftVisionAngle = mAngleOfVision;

@@ -20,12 +20,13 @@ public class OptionWindow implements Window{
 	
 	public final static int WINDOW_WIDTH = 200;
 	public final static int WINDOW_HEIGHT = 720;
-	public final static Vector2f mStandardSize = new Vector2f((float) (WINDOW_WIDTH*0.75), (float) (WINDOW_WIDTH*0.25));
-	public final static Vector2f mHalfSize = new Vector2f((float) (WINDOW_WIDTH*0.375), (float) (WINDOW_WIDTH*0.25));
-	public final static Vector2f mSlideButtonSize = new Vector2f((float) (WINDOW_WIDTH*0.12), (float) (WINDOW_WIDTH*0.1));
+	
+	public final static Vector2f STANDARD_SIZE = new Vector2f((float) (WINDOW_WIDTH*0.75), (float) (WINDOW_WIDTH*0.25));
+	public final static Vector2f HALF_SIZE = new Vector2f((float) (WINDOW_WIDTH*0.375), (float) (WINDOW_WIDTH*0.25));
+	public final static Vector2f SLIDE_BUTTON_SIZE = new Vector2f((float) (WINDOW_WIDTH*0.12), (float) (WINDOW_WIDTH*0.1));
 
-	public final static int mSlideTextSize = 20;
-	public final static int mHalfTextSize = 15;
+	public final static int SLIDE_TEXT_SIZE = 15;
+	public final static int HALF_TEXT_SIZE = 15;
 	
 	public final static Font mFont = new Font();
 	
@@ -38,17 +39,17 @@ public class OptionWindow implements Window{
 
 		loadFont();
 		
-		Vector2f pos = new Vector2f((float)(WINDOW_WIDTH-mStandardSize.x)/2, (float)(WINDOW_WIDTH-mStandardSize.x)/2);
+		Vector2f pos = new Vector2f((float)(WINDOW_WIDTH-STANDARD_SIZE.x)/2, (float)(WINDOW_WIDTH-STANDARD_SIZE.x)/2);
 		
-		BooleanButton myopia = new BooleanButton(mStandardSize, pos, new Text("Myopia", mFont));
-		SlidingButton myopiaDegree = new SlidingButton(mSlideButtonSize, pos = getNextButtonPosition(myopia.getSize(), pos), -Options.MAX_DEGREE, -Options.MIN_DEGREE);
+		BooleanButton myopia = new BooleanButton(STANDARD_SIZE, pos, new Text("Myopia", mFont));
+		SlidingButton myopiaDegree = new SlidingButton(SLIDE_BUTTON_SIZE, pos = getNextButtonPosition(myopia.getSize(), pos), -Options.MIN_DEGREE, -Options.MAX_DEGREE);
 		
-		BooleanButton hyperopia = new BooleanButton(mStandardSize, pos = getNextButtonPosition(myopiaDegree.getSize(), pos), new Text("Hyperopia", mFont));
-		SlidingButton hyperopiaDegree = new SlidingButton(mSlideButtonSize, pos = getNextButtonPosition(hyperopia.getSize(), pos), Options.MIN_DEGREE, Options.MAX_DEGREE);
+		BooleanButton hyperopia = new BooleanButton(STANDARD_SIZE, pos = getNextButtonPosition(myopiaDegree.getSize(), pos), new Text("Hyperopia", mFont));
+		SlidingButton hyperopiaDegree = new SlidingButton(SLIDE_BUTTON_SIZE, pos = getNextButtonPosition(hyperopia.getSize(), pos), Options.MIN_DEGREE, Options.MAX_DEGREE);
 		
-		BooleanButton cerebellum = new BooleanButton(mStandardSize, pos = getNextButtonPosition(hyperopiaDegree.getSize(), pos), new Text("Cerebellum", mFont));
-		BooleanButton leftEye = new BooleanButton(mHalfSize, pos = getNextButtonPosition(cerebellum.getSize(), pos), new Text("Left eye\n disabled", mFont, mHalfTextSize));
-		BooleanButton rightEye = new BooleanButton(mHalfSize, Vector2f.add(pos, new Vector2f(75, 0)), new Text("Right eye\n disabled", mFont, mHalfTextSize));
+		BooleanButton cerebellum = new BooleanButton(STANDARD_SIZE, pos = getNextButtonPosition(hyperopiaDegree.getSize(), pos), new Text("Cerebellum", mFont));
+		BooleanButton leftEye = new BooleanButton(HALF_SIZE, pos = getNextButtonPosition(cerebellum.getSize(), pos), new Text("Left eye\n disabled", mFont, HALF_TEXT_SIZE));
+		BooleanButton rightEye = new BooleanButton(HALF_SIZE, Vector2f.add(pos, new Vector2f(75, 0)), new Text("Right eye\n disabled", mFont, HALF_TEXT_SIZE));
 
 		
 		mButtons.put(new Condition("Myopia"), myopia);
