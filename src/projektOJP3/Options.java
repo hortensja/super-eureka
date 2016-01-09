@@ -8,6 +8,8 @@ public class Options {
 	public final boolean isMyopic;
 	public final boolean isHyperopic;
 	public final boolean isCerebellar;
+	public final boolean isLeftEyeDisabled;
+	public final boolean isRightEyeDisabled;
 	
 	public final static Options DEFAULT_OPTIONS = new Options();
 	
@@ -15,6 +17,8 @@ public class Options {
 		isMyopic = false;
 		isHyperopic = false;
 		isCerebellar = false;
+		isLeftEyeDisabled = false;
+		isRightEyeDisabled = false;
 	}
 	
 	public Options(Map<Disorder, Button> buttons) throws OptionsException{
@@ -28,7 +32,13 @@ public class Options {
 
 		eliminateBooleanErrors(buttons, new Disorder("Cerebellum"));
 		isCerebellar = ((BooleanButton) buttons.get(new Disorder("Cerebellum"))).getStatus();
-		System.out.println(isMyopic + " " + isHyperopic+" " + isCerebellar);
+
+		eliminateBooleanErrors(buttons, new Disorder("Cerebellum"));
+		isLeftEyeDisabled = ((BooleanButton) buttons.get(new Disorder("Left eye disabled"))).getStatus();
+		
+		eliminateBooleanErrors(buttons, new Disorder("Cerebellum"));
+		isRightEyeDisabled = ((BooleanButton) buttons.get(new Disorder("Right eye disabled"))).getStatus();
+		
 	}
 	
 	protected void eliminateBooleanErrors(Map<Disorder, Button> buttons, Disorder disorder) throws OptionsException{

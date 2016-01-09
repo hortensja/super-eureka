@@ -10,9 +10,14 @@ public class CerebellarPerson extends Person {
 
 	@Override
 	public void process(double timestep){
-		Vector2f randomFail = new Vector2f(10*(float) (mRandom.nextFloat()*timestep-timestep/2), 10*(float) (mRandom.nextFloat()*timestep-timestep/2));
+		Vector2f randomFail = new Vector2f(5*(float) (mRandom.nextFloat()*timestep-timestep/2), 5*(float) (mRandom.nextFloat()*timestep-timestep/2));
 		setPos(Vector2f.add(getPos(), randomFail));
 		
+		double newVel = getVel()+(mRandom.nextDouble()-0.5)*0.15;
+
+		if (newVel>0 && newVel<1.1){
+			setVel(newVel);
+		}		
 		super.process(timestep);
 		updateVisionRotation();
 	}

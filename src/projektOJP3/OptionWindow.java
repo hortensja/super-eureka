@@ -20,6 +20,7 @@ public class OptionWindow implements Window{
 
 	private org.jsfml.graphics.Font mFont = new Font();
 	private static Vector2f mStandardSize = new Vector2f(150, 50);
+	private static Vector2f mHalfSize = new Vector2f(75, 50);
 	
 	private Map<Disorder, Button> mButtons = new HashMap<>();
 	
@@ -35,11 +36,15 @@ public class OptionWindow implements Window{
 		BooleanButton myopia = new BooleanButton(mStandardSize, pos, new Text("Myopia", mFont));
 		BooleanButton hyperopia = new BooleanButton(mStandardSize, pos = getNextButtonPosition(myopia.getSize(), pos), new Text("Hyperopia", mFont));
 		BooleanButton cerebellum = new BooleanButton(mStandardSize, pos = getNextButtonPosition(hyperopia.getSize(), pos), new Text("Cerebellum", mFont));
+		BooleanButton leftEye = new BooleanButton(mHalfSize, pos = getNextButtonPosition(cerebellum.getSize(), pos), new Text("Left eye\n disabled", mFont, 20));
+		BooleanButton rightEye = new BooleanButton(mHalfSize, Vector2f.add(pos, new Vector2f(75, 0)), new Text("Right eye\n disabled", mFont, 20));
 
 		
 		mButtons.put(new Disorder("Myopia"), myopia);
 		mButtons.put(new Disorder("Hyperopia"), hyperopia);
 		mButtons.put(new Disorder("Cerebellum"), cerebellum);
+		mButtons.put(new Disorder("Left eye disabled"), leftEye);
+		mButtons.put(new Disorder("Right eye disabled"), rightEye);
 		
 	}
 	

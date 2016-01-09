@@ -33,10 +33,20 @@ public class Person extends Object {
 		this.getShape().setFillColor(color);
 		
 		if (o.isMyopic) {
-			mRadiusOfVision *= 0.5;
+			mRadiusOfVision *= 0.75;
 		} else if (o.isHyperopic) {
 			mRadiusOfVision *= 1.5;
 		}		
+		if (o.isLeftEyeDisabled && o.isRightEyeDisabled){
+			mRadiusOfVision = 10;
+			mVisionColor = new org.jsfml.graphics.Color(255,255,255,200);
+		} else if (o.isRightEyeDisabled){
+			mAngleOfVision /= 2;
+			mLeftVisionAngle = mAngleOfVision;
+		} else if (o.isLeftEyeDisabled) {
+			mAngleOfVision /= 2;
+			mLeftVisionAngle = 0;
+		}
 		
 		
 		Shape vision = ShapeGenerator.generatePie(mRadiusOfVision, mAngleOfVision);
@@ -44,6 +54,7 @@ public class Person extends Object {
 		vision.setPosition(getPos());
 		vision.setRotation((float) ((Math.atan2(getdV().y, getdV().x)-mLeftVisionAngle)*180/Math.PI));
 		this.mVision = vision;
+		
 	}
 
 	
