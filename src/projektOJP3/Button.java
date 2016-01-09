@@ -20,46 +20,82 @@ import org.jsfml.window.event.Event;
 
 public class Button {
 
-	
-	
+
+
 	private Vector2f mSize;
-	private final Shape mShape;
-	private CollidableShape mCollidableShape;
+	protected final Shape mShape;
+
+	protected boolean mIsValid = true;
+
+	protected CollidableShape mCollidableShape;
+	protected boolean mIsClicked = false;
+	protected boolean mIsMouseOver = false;
+
+	protected Color mDefaultColor = Color.WHITE;
+	protected Color mDefaultTextColor = Color.BLACK;
+	protected Color mClickedColor = Color.BLUE;
+	protected Color mOnMouseOverColor = new Color(200, 255, 255);
+
+
 	private Text mName;
-	private boolean mIsClicked = false;
-	private boolean mIsMouseOver = false;
-	
+
 	public Button(Vector2f size, Vector2f pos, Text name) {
 		mSize = size;
 		mShape = new RectangleShape(mSize);
 		mShape.setPosition(pos);
 		mName = name;
-		mName.setColor(Color.BLACK);
-		mName.setPosition(add(pos, new Vector2f(10, (mSize.y-40)/2)));
+		setNamePosition(pos);
+		mName.setColor(mDefaultTextColor);
 		mCollidableShape = new CollidableShape(mShape);
 	}
-	
 
-	
-	
+
+	public void setValidity(boolean isValid){
+		mIsValid = isValid;
+	}
+
+	protected void setNamePosition(Vector2f pos) {
+		mName.setPosition(add(pos, new Vector2f(5, (mSize.y-mName.getCharacterSize()-10)/2)));
+	}
+
+	protected void setSize(Vector2f mSize) {
+		this.mSize = mSize;
+	}
+
+	public Vector2f getSize(){
+		return mSize;
+	}
+	protected Text getName() {
+		return mName;
+	}
+
+	protected void setName(Text mName) {
+		this.mName = mName;
+	}
+	protected Shape getShape() {
+		return mShape;
+	}
+
+
 	protected Event processEvent(Event e) {
 
-		if(e.type == Event.Type.MOUSE_BUTTON_PRESSED) {
-			Vector2i click = e.asMouseButtonEvent().position;
-			Vector2f clickf = new Vector2f(click.x,click.y);
-			if(mCollidableShape.areColliding(clickf)) {
-				if(!mIsClicked) {
-				mIsClicked = true;
-				onClicked();
-				} else {
-					mIsClicked = false;
-					onUnclicked();
-				}
+		if (mIsValid){
+			if(e.type == Event.Type.MOUSE_BUTTON_PRESSED) {
+				Vector2i click = e.asMouseButtonEvent().position;
+				Vector2f clickf = new Vector2f(click.x,click.y);
+				if(mCollidableShape.areColliding(clickf)) {
+					if(!mIsClicked) {
+						mIsClicked = true;
+						onClicked();
+					} else {
+						mIsClicked = false;
+						onUnclicked();
+					}
 
+				}
+				return null;
 			}
-			return null;
-		}
-		/*if(e.type == Event.Type.MOUSE_BUTTON_RELEASED) {
+			/*if(e.type == Event.Type.MOUSE_BUTTON_RELEASED) {
 			if(mIsClicked) {
 				mIsClicked = false;
 				onUnclicked();
@@ -67,55 +103,53 @@ public class Button {
 			return e;
 		}*/
 
-		if(e.type == Event.Type.MOUSE_MOVED) {
-			Vector2i click = e.asMouseEvent().position;
-			Vector2f clickf = new Vector2f(click.x,click.y);
-			if(mShape.getFillColor() == Color.MAGENTA) {
-				if(!mCollidableShape.areColliding(clickf)) {
-					mIsMouseOver = false;
-					onMouseOut();
+			if(e.type == Event.Type.MOUSE_MOVED) {
+				Vector2i click = e.asMouseEvent().position;
+				Vector2f clickf = new Vector2f(click.x,click.y);
+				if(mShape.getFillColor() == mOnMouseOverColor) {
+					if(!mCollidableShape.areColliding(clickf)) {
+						mIsMouseOver = false;
+						onMouseOut();
+					}
+				} 
+				if(mCollidableShape.areColliding(clickf)) {
+					mIsMouseOver = true;
+					onMouseOver();
 				}
-			} 
-			if(mCollidableShape.areColliding(clickf)) {
-				mIsMouseOver = true;
-				onMouseOver();
 			}
 		}
 		return e;
 	}
 
-	
+
 	protected void setPosition(Vector2f pos) {
 		mShape.setPosition(pos);
 		mCollidableShape = new CollidableShape(mShape);
 	}
 	protected void onClicked() {
 
-		mShape.setFillColor(Color.BLACK);
-		mName.setColor(Color.WHITE);
+		mShape.setFillColor(mClickedColor);
+		mName.setColor(mDefaultColor);
 	}
 	protected void onUnclicked() {
 
-		mShape.setFillColor(Color.WHITE);
-		mName.setColor(Color.BLACK);
+		mShape.setFillColor(mDefaultColor);
+		mName.setColor(mDefaultTextColor);
 	}
 	protected void onMouseOver() {
 		if(!mIsClicked) {
-			mShape.setFillColor(Color.MAGENTA);
+			mShape.setFillColor(mOnMouseOverColor);
 		}
 	}
 	protected void onMouseOut() {
 		if(!mIsClicked) {
-		mShape.setFillColor(Color.GREEN);
+			mShape.setFillColor(mDefaultColor);
 		}
 	}
-	
-	void draw(RenderWindow w) {
+
+	public void draw(RenderWindow w) {
 		w.draw(mShape);
 		w.draw(mName);
 	}
-	
-	public Vector2f getSize(){
-		return mSize;
-	}
+
 }

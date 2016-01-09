@@ -21,13 +21,17 @@ public class BooleanButton extends Button{
 	
 	@Override
 	protected void onClicked() {
-		mStatus = !mStatus;
-		super.onClicked();
+		if (mIsValid){
+			mStatus = !mStatus;
+			super.onClicked();
+		}
 	}
-
+	
 	@Override
 	protected void onUnclicked() {
-		mStatus = !mStatus;
-		super.onUnclicked();
+		if (mIsValid){
+			mStatus = !mStatus;
+			super.onUnclicked();
+		}
 	}
 }

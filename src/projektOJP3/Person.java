@@ -19,6 +19,7 @@ import org.jsfml.window.event.Event;
 public class Person extends Object {
 
 	private double mRadiusOfVision = 60;
+	private double mTruncationOfVision = 0;
 	private double mAngleOfVision = 140*Math.PI/180;
 	private double mLeftVisionAngle = 70*Math.PI/180;
 	//K¥T ZERO JEST POZIOMO
@@ -33,9 +34,11 @@ public class Person extends Object {
 		this.getShape().setFillColor(color);
 		
 		if (o.isMyopic) {
-			mRadiusOfVision *= 0.75;
-		} else if (o.isHyperopic) {
-			mRadiusOfVision *= 1.5;
+			mRadiusOfVision *= (0.94+0.04*o.myopiaDegree);//0.75;
+		}
+		if (o.isHyperopic) {
+			mRadiusOfVision /= (0.94-0.04*o.hyperopiaDegree);
+			mTruncationOfVision += mRadiusOfVision*0.75;
 		}		
 		if (o.isLeftEyeDisabled && o.isRightEyeDisabled){
 			mRadiusOfVision = 10;
@@ -49,7 +52,8 @@ public class Person extends Object {
 		}
 		
 		
-		Shape vision = ShapeGenerator.generatePie(mRadiusOfVision, mAngleOfVision);
+		Shape vision = ShapeGenerator.generateTruncatedPie(mRadiusOfVision, mAngleOfVision, mTruncationOfVision);
+
 		vision.setFillColor(mVisionColor);
 		vision.setPosition(getPos());
 		vision.setRotation((float) ((Math.atan2(getdV().y, getdV().x)-mLeftVisionAngle)*180/Math.PI));

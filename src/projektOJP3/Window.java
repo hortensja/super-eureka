@@ -7,7 +7,8 @@ public interface Window {
 	void close();
 	void clear(org.jsfml.graphics.Color color);
 	void display();
-	void process();
+	
+	boolean process();
 	
 	RenderWindow getRenderWindow();
 	

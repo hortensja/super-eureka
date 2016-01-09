@@ -1,10 +1,10 @@
 package projektOJP3;
 
-public class Disorder {
+public class Condition {
 
 	private final String mName;
 	
-	public Disorder(String name){
+	public Condition(String name){
 		mName = name;
 	}
 	
@@ -17,10 +17,10 @@ public class Disorder {
 		if(o==null) {
 			return false;
 		}
-		if(!(o instanceof Disorder)) {
+		if(!(o instanceof Condition)) {
 			return false;
 		}
-		Disorder d = (Disorder) o;
+		Condition d = (Condition) o;
 		return d.mName.equalsIgnoreCase(mName);
 	}
 	

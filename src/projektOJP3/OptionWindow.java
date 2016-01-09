@@ -17,34 +17,47 @@ import org.jsfml.window.event.Event;
 public class OptionWindow implements Window{
 	
 	private final RenderWindow mWindow = new RenderWindow();
-
-	private org.jsfml.graphics.Font mFont = new Font();
-	private static Vector2f mStandardSize = new Vector2f(150, 50);
-	private static Vector2f mHalfSize = new Vector2f(75, 50);
 	
-	private Map<Disorder, Button> mButtons = new HashMap<>();
+	public final static int WINDOW_WIDTH = 200;
+	public final static int WINDOW_HEIGHT = 720;
+	public final static Vector2f mStandardSize = new Vector2f((float) (WINDOW_WIDTH*0.75), (float) (WINDOW_WIDTH*0.25));
+	public final static Vector2f mHalfSize = new Vector2f((float) (WINDOW_WIDTH*0.375), (float) (WINDOW_WIDTH*0.25));
+	public final static Vector2f mSlideButtonSize = new Vector2f((float) (WINDOW_WIDTH*0.12), (float) (WINDOW_WIDTH*0.1));
+
+	public final static int mSlideTextSize = 20;
+	public final static int mHalfTextSize = 15;
+	
+	public final static Font mFont = new Font();
+	
+	private Map<Condition, Button> mButtons = new HashMap<>();
 	
 	
 	public OptionWindow(){
-		mWindow.create(new VideoMode(200, 720), "Options");
+		mWindow.create(new VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Options");
 		mWindow.setPosition(new Vector2i(50, 50));
 
 		loadFont();
 		
-		Vector2f pos = new Vector2f(10,10);
+		Vector2f pos = new Vector2f((float)(WINDOW_WIDTH-mStandardSize.x)/2, (float)(WINDOW_WIDTH-mStandardSize.x)/2);
 		
 		BooleanButton myopia = new BooleanButton(mStandardSize, pos, new Text("Myopia", mFont));
-		BooleanButton hyperopia = new BooleanButton(mStandardSize, pos = getNextButtonPosition(myopia.getSize(), pos), new Text("Hyperopia", mFont));
-		BooleanButton cerebellum = new BooleanButton(mStandardSize, pos = getNextButtonPosition(hyperopia.getSize(), pos), new Text("Cerebellum", mFont));
-		BooleanButton leftEye = new BooleanButton(mHalfSize, pos = getNextButtonPosition(cerebellum.getSize(), pos), new Text("Left eye\n disabled", mFont, 20));
-		BooleanButton rightEye = new BooleanButton(mHalfSize, Vector2f.add(pos, new Vector2f(75, 0)), new Text("Right eye\n disabled", mFont, 20));
+		SlidingButton myopiaDegree = new SlidingButton(mSlideButtonSize, pos = getNextButtonPosition(myopia.getSize(), pos), -Options.MAX_DEGREE, -Options.MIN_DEGREE);
+		
+		BooleanButton hyperopia = new BooleanButton(mStandardSize, pos = getNextButtonPosition(myopiaDegree.getSize(), pos), new Text("Hyperopia", mFont));
+		SlidingButton hyperopiaDegree = new SlidingButton(mSlideButtonSize, pos = getNextButtonPosition(hyperopia.getSize(), pos), Options.MIN_DEGREE, Options.MAX_DEGREE);
+		
+		BooleanButton cerebellum = new BooleanButton(mStandardSize, pos = getNextButtonPosition(hyperopiaDegree.getSize(), pos), new Text("Cerebellum", mFont));
+		BooleanButton leftEye = new BooleanButton(mHalfSize, pos = getNextButtonPosition(cerebellum.getSize(), pos), new Text("Left eye\n disabled", mFont, mHalfTextSize));
+		BooleanButton rightEye = new BooleanButton(mHalfSize, Vector2f.add(pos, new Vector2f(75, 0)), new Text("Right eye\n disabled", mFont, mHalfTextSize));
 
 		
-		mButtons.put(new Disorder("Myopia"), myopia);
-		mButtons.put(new Disorder("Hyperopia"), hyperopia);
-		mButtons.put(new Disorder("Cerebellum"), cerebellum);
-		mButtons.put(new Disorder("Left eye disabled"), leftEye);
-		mButtons.put(new Disorder("Right eye disabled"), rightEye);
+		mButtons.put(new Condition("Myopia"), myopia);
+		mButtons.put(new Condition("Myopia degree"), myopiaDegree);
+		mButtons.put(new Condition("Hyperopia"), hyperopia);
+		mButtons.put(new Condition("Hyperopia degree"), hyperopiaDegree);
+		mButtons.put(new Condition("Cerebellum"), cerebellum);
+		mButtons.put(new Condition("Left eye disabled"), leftEye);
+		mButtons.put(new Condition("Right eye disabled"), rightEye);
 		
 	}
 	
@@ -59,16 +72,19 @@ public class OptionWindow implements Window{
 	}
 		
 	
-	public void process(){
+	public boolean process(){
+		getOptions();
 	    for(Event event : mWindow.pollEvents()) {
 	        if(event.type == Event.Type.CLOSED) {
 	          close();
+	          return false;
 	        }
 	        
-	        for(Entry<Disorder, Button> button : mButtons.entrySet()){
+	        for(Entry<Condition, Button> button : mButtons.entrySet()){
 	        	button.getValue().processEvent(event);
 	        }
 	    }
+	    return true;
 	}
 
 	public void clear(org.jsfml.graphics.Color color){
@@ -77,7 +93,7 @@ public class OptionWindow implements Window{
 	
 	public void display(){
 
-        for(Entry<Disorder, Button> button : mButtons.entrySet()){
+        for(Entry<Condition, Button> button : mButtons.entrySet()){
         	button.getValue().draw(mWindow);
         }
 		mWindow.display();

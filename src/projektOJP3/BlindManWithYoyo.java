@@ -62,7 +62,9 @@ public class BlindManWithYoyo {
 		
 		while(window.isOpen())
 		{
-			windowWithOptions.process();
+			if (!windowWithOptions.process()) {
+				window.close();
+			}
 			
 			window.clear(Color.WHITE);
 			world.draw(window);
