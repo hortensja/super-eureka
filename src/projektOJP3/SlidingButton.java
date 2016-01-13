@@ -38,21 +38,26 @@ public class SlidingButton extends Button {
 		resetPosition();
 		
 	}
-	
-	protected void setValue(int value) {
-		mValue = value;
-		setName(new Text(Integer.toString(getValue()), OptionWindow.mFont, OptionWindow.SLIDE_TEXT_SIZE));
+
+	@Override
+	public void draw(RenderWindow w) {
+		if (mIsValid){
+			w.draw(mSlide);
+			w.draw(getShape());
+			w.draw(getName());
+		} else {
+			resetPosition();
+		}
 	}
 
-	private void resetPosition(){
-		mSlide.setPosition(Vector2f.add(mPosition,new Vector2f(0, OptionWindow.SLIDE_BUTTON_SIZE.y/2)));
-		mShape.setPosition(mPosition);
-		mCollidableShape = new CollidableShape(mShape);
-		setValue(mMinValue);
-		setNamePosition(mPosition);
-		getName().setColor(mDefaultTextColor);
+	public int getValue(){
+		float relativePos = mShape.getPosition().x-mPosition.x;
+		int relativeValue = ((mMaxValue<0)
+				? (int)((mMaxValue-mMinValue-1)*relativePos/mSlide.getPoint(1).x)
+				: (int)((mMaxValue-mMinValue+1)*relativePos/mSlide.getPoint(1).x));
+		return mMinValue + relativeValue;
 	}
-	
+
 	@Override
 	protected void onClicked() {
 
@@ -129,18 +134,20 @@ public class SlidingButton extends Button {
 		//}
 	}
 
-	@Override
-	public void draw(RenderWindow w) {
-		if (mIsValid){
-			w.draw(mSlide);
-			w.draw(getShape());
-			w.draw(getName());
-		} else {
-			resetPosition();
-		}
+	protected void setValue(int value) {
+		mValue = value;
+		setName(new Text(Integer.toString(getValue()), OptionWindow.mFont, OptionWindow.SLIDE_TEXT_SIZE));
 	}
 
-
+	private void resetPosition(){
+		mSlide.setPosition(Vector2f.add(mPosition,new Vector2f(0, OptionWindow.SLIDE_BUTTON_SIZE.y/2)));
+		mShape.setPosition(mPosition);
+		mCollidableShape = new CollidableShape(mShape);
+		setValue(mMinValue);
+		setNamePosition(mPosition);
+		getName().setColor(mDefaultTextColor);
+	}
+	
 	private void move(Vector2f pos){
 		
 		//System.out.println((pos.x > mPosition.x) + " " + (pos.x < Vector2f.add(mPosition, mSlide.getPoint(1)).x-OptionWindow.mSlideButtonSize.x/2) + " pos: " + pos.x);
@@ -164,11 +171,4 @@ public class SlidingButton extends Button {
 		//System.out.println("value: " + getValue());
 	}
 	
-	public int getValue(){
-		float relativePos = mShape.getPosition().x-mPosition.x;
-		int relativeValue = ((mMaxValue<0)
-				? (int)((mMaxValue-mMinValue-1)*relativePos/mSlide.getPoint(1).x)
-				: (int)((mMaxValue-mMinValue+1)*relativePos/mSlide.getPoint(1).x));
-		return mMinValue + relativeValue;
-	}
 }

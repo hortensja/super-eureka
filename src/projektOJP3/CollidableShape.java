@@ -69,33 +69,7 @@ public class CollidableShape {
 		}
 		return false;
 	}
-	
-	
-	
-	
-	public Vector2f findSomeCollidingPoint(CollidableShape cs){
-		double oneDot;
-		for (int j=0;j<cs.mPoints.length;j++){
-			for (int i=0;i<mNormals.length;i++){
-				oneDot = MathUtil.dot(mNormals[i], add(mPoints[i], mShapePosition));
-				if (MathUtil.dot(mNormals[i],add(cs.mPoints[j],cs.mShapePosition))>oneDot){
-					return add(add(div(new Vector2f(mNormals[i].y, -mNormals[i].x), 2), mPoints[(i+1)%mPoints.length]), mShapePosition);
-				}
-			}
-		}
-		for (int j=0;j<mPoints.length;j++){
-			for (int i=0;i<cs.mNormals.length;i++){
-				oneDot = MathUtil.dot(cs.mNormals[i], add(cs.mPoints[i], cs.mShapePosition));
-				if (MathUtil.dot(cs.mNormals[i],add(mPoints[j],mShapePosition))>oneDot){
-					return add(add(div(new Vector2f(cs.mNormals[i].y, -cs.mNormals[i].x), 2), cs.mPoints[(i+1)%cs.mPoints.length]), cs.mShapePosition);					
-				}
-			}
-		}
-		return null;
-	}
-	
-	
-	
+		
 	protected double maximalDotProduct(Vector2f normal, Vector2f originPoint, CollidableShape cs){
 		double maximum = Double.NEGATIVE_INFINITY;
 		double currentDot = 0.0;

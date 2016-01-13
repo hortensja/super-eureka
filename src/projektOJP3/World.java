@@ -12,31 +12,24 @@ import java.util.Random;
 import org.jsfml.graphics.RectangleShape;
 import org.jsfml.graphics.RenderWindow;
 import org.jsfml.system.Vector2f;
+import org.jsfml.window.Mouse;
 import org.jsfml.window.event.Event;
 
 public class World implements Drawable, Processable{
 
 
+	private static int midX;
+	private static int midY;
+	
 	private final ArrayList<Object> mObjects = new ArrayList<>();
 	private final ArrayList<Person> mPersons = new ArrayList<>();
 	
-	private static int midX;
-	private static int midY;
 	
 
 	private Options mOptions;
 	private Random mRandom = new Random(System.nanoTime());
 	private int maxNumberOfObjects = 10;
 	
-	private Object generateTrees(double x, double y){
-		Object o = new ImmovableObject(x, y,ShapeGenerator.generateTree(mRandom.nextDouble()*80+20));
-		return o;
-	}
-
-	private Object generateWalls(double x, double y){
-		Object o = new ImmovableObject(x, y,ShapeGenerator.generateWall());
-		return o;
-	}
 	
 	public World(RenderWindow window, Options options){
 		midX = window.getSize().x/2;
@@ -61,7 +54,20 @@ public class World implements Drawable, Processable{
 		
 		int numberOfTrees = mRandom.nextInt(maxNumberOfObjects)+1;
 		int numberOfWalls = mRandom.nextInt(maxNumberOfObjects)+1;
+		int numberOfCars = mRandom.nextInt(2)+1;
 		Object o;
+
+		//o = generateCars(mRandom.nextInt(midX*2), mRandom.nextInt(midY*2));
+		//addObject(o);
+		
+		
+		for(int i=0;i<numberOfCars;i++){
+			//do {
+				o = generateCars(mRandom.nextInt(midX)+midX/2, mRandom.nextInt(midY)+midY/2);
+			//} while(isCollidingWithAnything(o));
+			addObject(o);
+		}
+
 		for(int i=0;i<numberOfTrees;i++){
 			do {
 				o = generateTrees(mRandom.nextInt(midX*2), mRandom.nextInt(midY*2));
@@ -74,16 +80,11 @@ public class World implements Drawable, Processable{
 			} while(isCollidingWithAnything(o));
 			addObject(o);
 		}
+		
+		
 		System.out.println("World size: " + midX+ " " + midY);
 	}
 	
-	protected boolean isCollidingWithAnything(Object o){
-		for (Object object : mObjects){
-			if (Collision.areCollidingBetterTest(o, object))
-				return true;
-		}
-		return false;
-	}
 	
 	public void onResize(RenderWindow window){
 		setMidX((window.getSize().x)/2);
@@ -125,7 +126,6 @@ public class World implements Drawable, Processable{
 	@Override
 	public void process(double timestep) {
 		
-		 
 		
 		for(Object object : mObjects) {
 			object.process(timestep);
@@ -134,6 +134,7 @@ public class World implements Drawable, Processable{
 		int i = 1;
 		
 		for (Person person : mPersons) {
+			
 			person.process(timestep);
 
 			for(Object object : mObjects) {
@@ -161,9 +162,33 @@ public class World implements Drawable, Processable{
 			}
 			i++;
 		}
+		
+		i = 1;
+		for(Object object : mObjects) {
+
+			for(int j=i; j<mObjects.size();j++){
+
+				if (Collision.areCollidingBetterTest(object.getCollidableShape(), mObjects.get(j).getCollidableShape())){
+					Collision.collideObjectWithObject(object, mObjects.get(j));
+				}
+			}
+			i++;
+		}
+
+		for(i=0;i<mPersons.size();i++) {
+			if (mPersons.get(i).isDead()) {
+				mPersons.remove(i);
+			}
+		}
+		
+
 	}
 	
 	public Event processEvent(Event e){ 
+		if(e.asMouseButtonEvent().button == Mouse.Button.RIGHT) {
+			
+			addObject(generateCars((float) e.asMouseEvent().position.x, (float) e.asMouseEvent().position.y));
+		}
 		for(Person person : mPersons){
 			if(e!=null)
 				e = person.processEvent(e);
@@ -180,4 +205,27 @@ public class World implements Drawable, Processable{
 	public void addPerson(Person person) {
 		mPersons.add(person);
 	}
+	
+	
+
+	protected boolean isCollidingWithAnything(Object o){
+		for (Object object : mObjects){
+			if (Collision.areCollidingBetterTest(o, object))
+				return true;
+		}
+		return false;
+	}
+	
+	private Object generateTrees(double x, double y){
+		return new ImmovableObject(x, y,ShapeGenerator.generateTree(mRandom.nextDouble()*80+20));
+	}
+
+	private Object generateWalls(double x, double y){
+		return new ImmovableObject(x, y,ShapeGenerator.generateWall());
+	}
+	
+	private Object generateCars(double x, double y) {
+		return new Car(x, y);
+	}
+	
 }

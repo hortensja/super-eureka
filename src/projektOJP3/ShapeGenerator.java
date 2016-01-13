@@ -97,4 +97,11 @@ private static Random rand = new Random(System.nanoTime());
 		return shape;
 	}
 	
+	public static Shape generateCar(){
+		Shape shape = generateRect(100,50);
+		shape.setFillColor(Color.BLUE);
+		//shape.setRotation(rand.nextInt(360));
+		return shape;
+	}
+	
 }

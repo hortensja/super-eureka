@@ -18,9 +18,8 @@ import org.jsfml.window.event.Event;
 
 
 
-public class Button {
+public class Button implements Drawable{
 
-	private Vector2f mSize;
 	protected final Shape mShape;
 
 	protected boolean mIsValid = true;
@@ -36,6 +35,7 @@ public class Button {
 	protected Color mClickedColor = Color.BLUE;
 	protected Color mOnMouseOverColor = new Color(200, 255, 255);
 
+	private Vector2f mSize;
 
 	public Button(Vector2f size, Vector2f pos, Text name) {
 		mSize = size;
@@ -48,8 +48,20 @@ public class Button {
 	}
 
 
+	public void draw(RenderWindow w) {
+		w.draw(mShape);
+		w.draw(mName);
+	}
+	
 	public void setValidity(boolean isValid){
 		mIsValid = isValid;
+	}
+
+	public Vector2f getSize(){
+		return mSize;
+	}
+	protected Text getName() {
+		return mName;
 	}
 
 	protected void setNamePosition(Vector2f pos) {
@@ -58,13 +70,6 @@ public class Button {
 
 	protected void setSize(Vector2f mSize) {
 		this.mSize = mSize;
-	}
-
-	public Vector2f getSize(){
-		return mSize;
-	}
-	protected Text getName() {
-		return mName;
 	}
 
 	protected void setName(Text mName) {
@@ -145,9 +150,5 @@ public class Button {
 		}
 	}
 
-	public void draw(RenderWindow w) {
-		w.draw(mShape);
-		w.draw(mName);
-	}
 
 }

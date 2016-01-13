@@ -25,12 +25,17 @@ public class Person extends Object {
 	//K¥T ZERO JEST POZIOMO
 	
 	private Shape mVision;
-	private org.jsfml.graphics.Color mVisionColor = new org.jsfml.graphics.Color(180,180,180,180);
+	private Color mVisionColor = new Color(180,180,180,180);
+	
+	private double runCoeff = 0.4;
+	private boolean isRunning = false;
+	private int runCounter = 0;
+	private int maxRunTurns = 5;
 	
 	public Person(double x, double y, Options o) {
 		super(x, y, new CircleShape(15));
 		this.getShape().setOrigin(15,15);
-		org.jsfml.graphics.Color color = new org.jsfml.graphics.Color(mRandom.nextInt(256),mRandom.nextInt(256),mRandom.nextInt(256));
+		Color color = new Color(mRandom.nextInt(256),mRandom.nextInt(256),mRandom.nextInt(256));
 		this.getShape().setFillColor(color);
 		
 		if (o.isMyopic) {
@@ -42,7 +47,7 @@ public class Person extends Object {
 		}		
 		if (o.isLeftEyeDisabled && o.isRightEyeDisabled){
 			mRadiusOfVision = 10;
-			mVisionColor = new org.jsfml.graphics.Color(255,255,255,0);
+			mVisionColor = new Color(255,255,255,0);
 		} else if (o.isRightEyeDisabled){
 			mAngleOfVision /= 2;
 			mLeftVisionAngle = mAngleOfVision;
@@ -79,6 +84,45 @@ public class Person extends Object {
 		this.mAngleOfVision = mAngleOfVision;
 	}
 	
+	public void run(){
+		if (!isRunning) {
+			isRunning = true;
+			//double newVel = (getVel() + runCoeff > 1) ? 1 : (getVel() + runCoeff);
+			//setVel(newVel);
+			setVel(getVel()+0.4);
+		}
+	}
+	
+	@Override
+	public void draw(RenderWindow window) {
+		window.draw(getShape());
+		window.draw(mVision);
+	}
+
+	@Override
+	public CollidableShape getCollidableShape(){
+		return new CollidableShape(getShape());
+	}
+	
+	public CollidableShape getCollidableVision(){
+		return new CollidableShape(mVision);
+	}
+
+	@Override
+	public void process(double timestep) {
+		super.process(timestep);
+		updateVisionRotation();
+		if (isRunning) {
+			runCounter++;
+		}
+		if(runCounter > maxRunTurns) {
+			isRunning = false;
+			setVel(getVel() - runCoeff);
+			runCounter = 0;
+		}
+	}
+	
+	
 	@Override
 	protected void updateShapePosition(){
 		super.updateShapePosition();
@@ -88,52 +132,22 @@ public class Person extends Object {
 	@Override
 	protected void bounce(Vector2f normal){
 		super.bounce(normal);
-		updateVisionRotation();
+	//	updateVisionRotation();
 	}
 	
 	protected void turn(double distance, Vector2f normal) {
-		/*Matrix2x2f m = MathUtil.getRotationMatrix((float) (Math.PI/2));
-		Vector2f turnVector = MathUtil.matVecMul(m, normal);
-		
-		double kappa = 10000/(distance*distance);//MathUtil.dot(getdV(), turnVector);///(distance*distance);
-		kappa = 0.2*MathUtil.dot(getdV(), normal);
-		double originaldVLength = getdVMod();
-		Vector2f newdV = sub(getdV(), mul(normal, (float) kappa));
-		//Vector2f newdV = add(getdV(), mul(turnVector, (float) kappa));
-		double newdVLength = MathUtil.vectorLength(newdV);
-		//setdV(newdV);
-		//setdV(mul(newdV, (float) (0.9*originaldVLength/newdVLength)));
-*/		
-		
+			
 		double kappa = 0.15*MathUtil.dot(getdV(), normal);///distance;
 		double originaldVLength = getdVMod();
 		Vector2f newdV = sub(getdV(), mul(normal, (float) kappa));
-		double newdVLength = MathUtil.vectorLength(newdV);
-		//setdV(mul(newdV, (float) (originaldVLength/newdVLength)));	
-		//setVel(2*getVel());
+		//double newdVLength = MathUtil.vectorLength(newdV);
 		setdV(newdV);
-		updateVisionRotation();
+		//updateVisionRotation();
 	}
-
-	@Override
-	public void draw(RenderWindow window) {
-		window.draw(getShape());
-		window.draw(mVision);
-	}
-	
 
 	
 	protected void updateVisionRotation(){
 		mVision.setRotation((float) ((Math.atan2(getdV().y, getdV().x)-mLeftVisionAngle)*180/Math.PI));		
-	}
-	
-	@Override
-	public CollidableShape getCollidableShape(){
-		return new CollidableShape(getShape());
-	}
-	
-	public CollidableShape getCollidableVision(){
-		return new CollidableShape(mVision);
 	}
 	
 }

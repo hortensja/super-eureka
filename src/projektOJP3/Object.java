@@ -1,14 +1,17 @@
 package projektOJP3;
 
+import static org.jsfml.system.Vector2f.add;
+import static org.jsfml.system.Vector2f.mul;
+import static org.jsfml.system.Vector2f.sub;
+
 import java.util.Random;
 
+import org.jsfml.graphics.Color;
 import org.jsfml.graphics.RenderWindow;
 import org.jsfml.graphics.Shape;
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 import org.jsfml.window.event.Event;
-
-import static org.jsfml.system.Vector2f.*;
 
 public class Object implements Drawable,Processable{
 
@@ -21,7 +24,7 @@ public class Object implements Drawable,Processable{
 	private double mVel;
 		
 	private Vector2f mPos;
-	
+	private boolean isDead = false;
 	
 	public Object(double x, double y, Shape shape) {
 		if (x>=(World.getMidX()*2) || y>=(World.getMidY()*2) || x<=0 || y<=0){
@@ -36,6 +39,33 @@ public class Object implements Drawable,Processable{
 		randomizeVelocity();
 	}
 	
+	@Override
+	public void process(double timestep) {
+		if(!isInBounds())
+		{
+			onOutOfBounds(findNormalIfOutOfBounds());
+		}
+		
+		mPos = add(mPos, mul(mdV, (float) (mVel*timestep)));
+
+		updateShapePosition();
+		
+	}
+
+	@Override
+	public void draw(RenderWindow window) {
+		window.draw(getShape());
+		
+	}
+	public Shape getShape() {
+		return mShape;
+	}
+	
+	public CollidableShape getCollidableShape(){
+		return mCollidableShape;
+	}
+	
+	
 	public Vector2f getdV() {
 		return mdV;
 	}
@@ -49,10 +79,6 @@ public class Object implements Drawable,Processable{
 		this.mPos = mPos;
 	}
 	
-	protected double getdVMod(){
-		return MathUtil.vectorLength(mdV);
-	}
-	
 	
 	public double getVel() {
 		return mVel;
@@ -60,7 +86,25 @@ public class Object implements Drawable,Processable{
 	public void setVel(double mVel) {
 		this.mVel = mVel;
 	}
+
+	public Vector2f getCenter(){
+		double h = this.getShape().getGlobalBounds().height;
+		double w = this.getShape().getGlobalBounds().width;
+		
+		return Vector2f.add(mShape.getPosition(), new Vector2f((float)w/2, (float)h/2));
+	}
 	
+	public void die(){
+		isDead = true;
+	}
+	
+	public boolean isDead(){
+		return isDead;
+	}
+	
+	protected double getdVMod(){
+		return MathUtil.vectorLength(mdV);
+	}
 	protected void randomizeDirection()	{
 		mdV = MathUtil.normalizeVector(new Vector2f(mRandom.nextFloat()*2-1, mRandom.nextFloat()*2-1));
 	}
@@ -158,44 +202,15 @@ public class Object implements Drawable,Processable{
 		return this.getShape().getPosition();
 	}
 	
-	public Vector2f getCenter(){
-		double h = this.getShape().getGlobalBounds().height;
-		double w = this.getShape().getGlobalBounds().width;
-		
-		return Vector2f.add(mShape.getPosition(), new Vector2f((float)w/2, (float)h/2));
-		
-	}
 	protected void updateShapePosition(){
 		getShape().setPosition(mPos);
 		mCollidableShape.setShapePosition(getPosition());
 	}
 	
-	
-	@Override
-	public void process(double timestep) {
-		if(!isInBounds())
-		{
-			onOutOfBounds(findNormalIfOutOfBounds());
-		}
-		
-		mPos = add(mPos, mul(mdV, (float) (mVel*timestep)));
-
-		updateShapePosition();
-		
-	}
-
-	@Override
-	public void draw(RenderWindow window) {
-		window.draw(getShape());
-		
-	}
-	public Shape getShape() {
-		return mShape;
+	protected void setCollidableShape(CollidableShape cs){
+		mCollidableShape = cs;
 	}
 	
-	public CollidableShape getCollidableShape(){
-		return mCollidableShape;
-	}
 	
 	protected Event processEvent(Event e) {
 		

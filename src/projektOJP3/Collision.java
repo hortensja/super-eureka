@@ -41,6 +41,15 @@ public class Collision {
 		Vector2f normal1 = object.getCollidableShape().minimalDistanceNormal(object2.getCollidableShape());
 		Vector2f normal2 = object2.getCollidableShape().minimalDistanceNormal(object.getCollidableShape());
 	
+		if(object instanceof Person && object2 instanceof Car) {
+			object.die();
+			return;
+		}
+		if (object instanceof Car && object2 instanceof Person) {
+			object2.die();
+			return;
+		}
+		
 		if(MathUtil.dot(object.getdV(), normal2)<0){
 			object.bounce(normal2);
 			//System.out.println("baunsuje o: " + normal2);
@@ -55,13 +64,19 @@ public static void collideVisionWithObject(Person person, Object object2){
 		Vector2f normal1 = person.getCollidableVision().minimalDistanceNormal(object2.getCollidableShape());
 		Vector2f normal2 = object2.getCollidableShape().minimalDistanceNormal(person.getCollidableShape());
 	
-		//Vector2f someCollidingPoint = object2.getCollidableShape().findSomeCollidingPoint(person.getCollidableVision()); 
-		
 		double distance = MathUtil.vectorLength(Vector2f.sub(person.getShape().getPosition(), object2.getCenter()));
 		
 		//System.out.println("dist: " + Vector2f.sub(person.getShape().getPosition(), someCollidingPoint));
 		
 		//System.out.println(distance);
+		
+		if(object2 instanceof Car) {
+			if ((MathUtil.dot(person.getdV(), object2.getdV()) < -0.25) && (MathUtil.dot(person.getdV(), object2.getdV()) >-0.75)) {
+				person.setdV(Vector2f.neg(person.getdV()));
+				person.turn(distance, normal2);
+				person.run();
+			}
+		}
 		
 		if(MathUtil.dot(person.getdV(), normal2)<0){
 			person.turn(distance, normal2);

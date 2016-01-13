@@ -15,6 +15,8 @@ public class Options {
 	public final boolean isLeftEyeDisabled;
 	public final boolean isRightEyeDisabled;
 	
+	
+	
 	public final static Options DEFAULT_OPTIONS = new Options();
 	
 	private Options(){

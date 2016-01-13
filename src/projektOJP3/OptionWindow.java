@@ -16,7 +16,6 @@ import org.jsfml.window.event.Event;
 
 public class OptionWindow implements Window{
 	
-	private final RenderWindow mWindow = new RenderWindow();
 	
 	public final static int WINDOW_WIDTH = 200;
 	public final static int WINDOW_HEIGHT = 720;
@@ -29,7 +28,8 @@ public class OptionWindow implements Window{
 	public final static int HALF_TEXT_SIZE = 15;
 	
 	public final static Font mFont = new Font();
-	
+
+	private final RenderWindow mWindow = new RenderWindow();
 	private Map<Condition, Button> mButtons = new HashMap<>();
 	
 	
@@ -52,6 +52,9 @@ public class OptionWindow implements Window{
 		BooleanButton rightEye = new BooleanButton(HALF_SIZE, Vector2f.add(pos, new Vector2f(75, 0)), new Text("Right eye\n disabled", mFont, HALF_TEXT_SIZE));
 
 		
+		
+		BooleanButton b;
+		
 		mButtons.put(new Condition("Myopia"), myopia);
 		mButtons.put(new Condition("Myopia degree"), myopiaDegree);
 		mButtons.put(new Condition("Hyperopia"), hyperopia);
@@ -63,14 +66,6 @@ public class OptionWindow implements Window{
 	}
 	
 
-	private void loadFont(){
-		try {
-		    mFont.loadFromFile(Paths.get("resources\\bell.ttf"));
-		} catch(IOException ex) {
-		    //Failed to load font
-		    ex.printStackTrace();
-		}
-	}
 		
 	
 	public boolean process(){
@@ -118,7 +113,15 @@ public class OptionWindow implements Window{
 		}
 	}
 	
-	
+
+	private void loadFont(){
+		try {
+		    mFont.loadFromFile(Paths.get("resources\\bell.ttf"));
+		} catch(IOException ex) {
+		    //Failed to load font
+		    ex.printStackTrace();
+		}
+	}
 	
 	private Vector2f getNextButtonPosition(Vector2f size, Vector2f pos){
 		pos = Vector2f.add(pos, new Vector2f(0,size.y+10));
