@@ -36,6 +36,7 @@ public class World implements Drawable, Processable{
 		midY = window.getSize().y/2;
 		
 		mOptions = options;
+		new String();
 		
 		//adding bounds just in case
 		addObject(new ImmovableObject(0, -1, ShapeGenerator.generateRect(2*midX, 1)));
@@ -185,10 +186,7 @@ public class World implements Drawable, Processable{
 	}
 	
 	public Event processEvent(Event e){ 
-		if(e.asMouseButtonEvent().button == Mouse.Button.RIGHT) {
-			
-			addObject(generateCars((float) e.asMouseEvent().position.x, (float) e.asMouseEvent().position.y));
-		}
+	
 		for(Person person : mPersons){
 			if(e!=null)
 				e = person.processEvent(e);

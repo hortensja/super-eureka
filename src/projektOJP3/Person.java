@@ -138,7 +138,6 @@ public class Person extends Object {
 	protected void turn(double distance, Vector2f normal) {
 			
 		double kappa = 0.15*MathUtil.dot(getdV(), normal);///distance;
-		double originaldVLength = getdVMod();
 		Vector2f newdV = sub(getdV(), mul(normal, (float) kappa));
 		//double newdVLength = MathUtil.vectorLength(newdV);
 		setdV(newdV);

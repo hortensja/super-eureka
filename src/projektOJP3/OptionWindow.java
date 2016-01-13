@@ -31,6 +31,7 @@ public class OptionWindow implements Window{
 
 	private final RenderWindow mWindow = new RenderWindow();
 	private Map<Condition, Button> mButtons = new HashMap<>();
+	private Map<String, Button> mShapeButtons = new HashMap<>();
 	
 	
 	public OptionWindow(){
@@ -42,18 +43,38 @@ public class OptionWindow implements Window{
 		Vector2f pos = new Vector2f((float)(WINDOW_WIDTH-STANDARD_SIZE.x)/2, (float)(WINDOW_WIDTH-STANDARD_SIZE.x)/2);
 		
 		BooleanButton myopia = new BooleanButton(STANDARD_SIZE, pos, new Text("Myopia", mFont));
-		SlidingButton myopiaDegree = new SlidingButton(SLIDE_BUTTON_SIZE, pos = getNextButtonPosition(myopia.getSize(), pos), -Options.MIN_DEGREE, -Options.MAX_DEGREE);
+		SlidingButton myopiaDegree = new SlidingButton(SLIDE_BUTTON_SIZE,
+				pos = getNextButtonPosition(myopia.getSize(), pos),
+				-Options.MIN_DEGREE, -Options.MAX_DEGREE);
 		
-		BooleanButton hyperopia = new BooleanButton(STANDARD_SIZE, pos = getNextButtonPosition(myopiaDegree.getSize(), pos), new Text("Hyperopia", mFont));
-		SlidingButton hyperopiaDegree = new SlidingButton(SLIDE_BUTTON_SIZE, pos = getNextButtonPosition(hyperopia.getSize(), pos), Options.MIN_DEGREE, Options.MAX_DEGREE);
+		BooleanButton hyperopia = new BooleanButton(STANDARD_SIZE,
+				pos = getNextButtonPosition(myopiaDegree.getSize(), pos),
+				new Text("Hyperopia", mFont));
+		SlidingButton hyperopiaDegree = new SlidingButton(SLIDE_BUTTON_SIZE,
+				pos = getNextButtonPosition(hyperopia.getSize(), pos),
+				Options.MIN_DEGREE, Options.MAX_DEGREE);
 		
-		BooleanButton cerebellum = new BooleanButton(STANDARD_SIZE, pos = getNextButtonPosition(hyperopiaDegree.getSize(), pos), new Text("Cerebellum", mFont));
-		BooleanButton leftEye = new BooleanButton(HALF_SIZE, pos = getNextButtonPosition(cerebellum.getSize(), pos), new Text("Left eye\n disabled", mFont, HALF_TEXT_SIZE));
-		BooleanButton rightEye = new BooleanButton(HALF_SIZE, Vector2f.add(pos, new Vector2f(75, 0)), new Text("Right eye\n disabled", mFont, HALF_TEXT_SIZE));
+		BooleanButton cerebellum = new BooleanButton(STANDARD_SIZE,
+				pos = getNextButtonPosition(hyperopiaDegree.getSize(), pos),
+				new Text("Cerebellum", mFont));
+		
+		BooleanButton leftEye = new BooleanButton(HALF_SIZE,
+				pos = getNextButtonPosition(cerebellum.getSize(), pos),
+				new Text("Left eye\n disabled", mFont, HALF_TEXT_SIZE));
+		BooleanButton rightEye = new BooleanButton(HALF_SIZE,
+				Vector2f.add(pos, new Vector2f(75, 0)),
+				new Text("Right eye\n disabled", mFont, HALF_TEXT_SIZE));
 
+		BooleanButton car = new BooleanButton(STANDARD_SIZE,
+				pos = getNextButtonPosition(rightEye.getSize(), getNextButtonPosition(rightEye.getSize(), getNextButtonPosition(rightEye.getSize(), pos))),
+				new Text("Car", mFont));
+		BooleanButton tree = new BooleanButton(STANDARD_SIZE,
+				pos = getNextButtonPosition(car.getSize(), pos),
+				new Text("Tree", mFont));
+		BooleanButton wall = new BooleanButton(STANDARD_SIZE,
+				pos = getNextButtonPosition(tree.getSize(), pos),
+				new Text("Wall", mFont));
 		
-		
-		BooleanButton b;
 		
 		mButtons.put(new Condition("Myopia"), myopia);
 		mButtons.put(new Condition("Myopia degree"), myopiaDegree);
@@ -63,6 +84,10 @@ public class OptionWindow implements Window{
 		mButtons.put(new Condition("Left eye disabled"), leftEye);
 		mButtons.put(new Condition("Right eye disabled"), rightEye);
 		
+		mShapeButtons.put(new String("car"), car);
+		mShapeButtons.put(new String("tree"), tree);
+		mShapeButtons.put(new String("wall"), wall);
+		
 	}
 	
 
@@ -70,6 +95,7 @@ public class OptionWindow implements Window{
 	
 	public boolean process(){
 		getOptions();
+		getShapeOptions();
 	    for(Event event : mWindow.pollEvents()) {
 	        if(event.type == Event.Type.CLOSED) {
 	          close();
@@ -77,6 +103,9 @@ public class OptionWindow implements Window{
 	        }
 	        
 	        for(Entry<Condition, Button> button : mButtons.entrySet()){
+	        	button.getValue().processEvent(event);
+	        }
+	        for(Entry<String, Button> button: mShapeButtons.entrySet()){
 	        	button.getValue().processEvent(event);
 	        }
 	    }
@@ -90,6 +119,10 @@ public class OptionWindow implements Window{
 	public void display(){
 
         for(Entry<Condition, Button> button : mButtons.entrySet()){
+        	button.getValue().draw(mWindow);
+        }
+        
+        for(Entry<String, Button> button: mShapeButtons.entrySet()){
         	button.getValue().draw(mWindow);
         }
 		mWindow.display();
@@ -113,6 +146,15 @@ public class OptionWindow implements Window{
 		}
 	}
 	
+	public String getShapeOptions(){
+		try {
+			return ShapeOptions.getShapeOptions(mShapeButtons);
+		} catch (OptionsException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return new String();
+		}
+	}
 
 	private void loadFont(){
 		try {
