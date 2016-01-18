@@ -64,9 +64,18 @@ public class OptionWindow implements Window{
 		BooleanButton rightEye = new BooleanButton(HALF_SIZE,
 				Vector2f.add(pos, new Vector2f(75, 0)),
 				new Text("Right eye\n disabled", mFont, HALF_TEXT_SIZE));
+		
+
+		BooleanButton leftSide = new BooleanButton(HALF_SIZE,
+				pos = getNextButtonPosition(leftEye.getSize(), pos),
+				new Text("Left side\n disabled", mFont, HALF_TEXT_SIZE));
+		BooleanButton rightSide = new BooleanButton(HALF_SIZE,
+				Vector2f.add(pos, new Vector2f(75, 0)),
+				new Text("Right side\n disabled", mFont, HALF_TEXT_SIZE));
 
 		BooleanButton car = new BooleanButton(STANDARD_SIZE,
-				pos = getNextButtonPosition(rightEye.getSize(), getNextButtonPosition(rightEye.getSize(), getNextButtonPosition(rightEye.getSize(), pos))),
+				pos = getNextButtonPosition(rightSide.getSize(),
+						getNextButtonPosition(rightSide.getSize(), getNextButtonPosition(rightSide.getSize(), pos))),
 				new Text("Car", mFont));
 		BooleanButton tree = new BooleanButton(STANDARD_SIZE,
 				pos = getNextButtonPosition(car.getSize(), pos),
@@ -83,6 +92,8 @@ public class OptionWindow implements Window{
 		mButtons.put(new Condition("Cerebellum"), cerebellum);
 		mButtons.put(new Condition("Left eye disabled"), leftEye);
 		mButtons.put(new Condition("Right eye disabled"), rightEye);
+		mButtons.put(new Condition("Left side disabled"), leftSide);
+		mButtons.put(new Condition("Right side disabled"), rightSide);
 		
 		mShapeButtons.put(new String("car"), car);
 		mShapeButtons.put(new String("tree"), tree);

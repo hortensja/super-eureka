@@ -27,10 +27,14 @@ public class Person extends Object {
 	private Shape mVision;
 	private Color mVisionColor = new Color(180,180,180,180);
 	
+	private final Matrix2x2f gaitDeviationMatrix;
+	private double gaitDeviation = 0.1*Math.PI/180;
+	
 	private double runCoeff = 0.4;
 	private boolean isRunning = false;
 	private int runCounter = 0;
 	private int maxRunTurns = 5;
+
 	
 	public Person(double x, double y, Options o) {
 		super(x, y, new CircleShape(15));
@@ -56,6 +60,15 @@ public class Person extends Object {
 			mLeftVisionAngle = 0;
 		}
 		
+		if(o.isLeftSideDisabled){
+			gaitDeviationMatrix = new Matrix2x2f((float) Math.cos(-gaitDeviation), (float) -Math.sin(-gaitDeviation),
+												(float) Math.sin(-gaitDeviation), (float) Math.cos(-gaitDeviation));
+		} else if(o.isRightSideDisabled){
+			gaitDeviationMatrix = new Matrix2x2f((float) Math.cos(gaitDeviation), (float) -Math.sin(gaitDeviation),
+												(float) Math.sin(gaitDeviation), (float) Math.cos(gaitDeviation));
+		} else {
+			gaitDeviationMatrix = new Matrix2x2f(1, 0, 0, 1);
+		}
 		
 		Shape vision = ShapeGenerator.generateTruncatedPie(mRadiusOfVision, mAngleOfVision, mTruncationOfVision);
 
@@ -111,6 +124,7 @@ public class Person extends Object {
 	@Override
 	public void process(double timestep) {
 		super.process(timestep);
+		setdV(MathUtil.matVecMul(gaitDeviationMatrix, getdV()));
 		updateVisionRotation();
 		if (isRunning) {
 			runCounter++;

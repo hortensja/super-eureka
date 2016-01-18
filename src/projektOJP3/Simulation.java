@@ -25,8 +25,7 @@ public class Simulation {
 	 * 15 is person's size so it will be circa 40 cm (30 for nice calculations)
 	 * walls' size vary between 10 and 160 which gives 20 cm to 3.2 m so it can be anything from colonne morris to shed or so
 	 * trees' diameter is between 20 and 100 which makes 40 to 200 cm (pretty accurate)
-	 * healthy human vision extends to 60 which is 1.2 m which is so very wrong
-	 * 	or perhaps not if we interpret is as acute vision
+	 * human vision should be interpreted approximately as acute vision
 	 *  
 	 *  
 	 *  cars are way too small in order to save space
@@ -84,13 +83,13 @@ public class Simulation {
 						switch(shapeOptions) {
 						case "car":
 							world.addObject(new Car(event.asMouseEvent().position.x, event.asMouseEvent().position.y));
-							break;
+							continue;
 						case "wall":
 							world.addObject(new ImmovableObject((float) event.asMouseEvent().position.x, (float) event.asMouseEvent().position.y, ShapeGenerator.generateWall()));
-							break;
+							continue;
 						case "tree":
 							world.addObject(new ImmovableObject((float) event.asMouseEvent().position.x, (float) event.asMouseEvent().position.y, ShapeGenerator.generateTree(rand.nextDouble()*80+10)));
-							break;
+							continue;
 						default:
 							world.addObject(new ImmovableObject((float) event.asMouseEvent().position.x, (float) event.asMouseEvent().position.y, ShapeGenerator.generateShape()));
 						}

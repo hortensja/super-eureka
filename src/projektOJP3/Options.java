@@ -14,6 +14,8 @@ public class Options {
 	public final boolean isCerebellar;
 	public final boolean isLeftEyeDisabled;
 	public final boolean isRightEyeDisabled;
+	public final boolean isLeftSideDisabled;
+	public final boolean isRightSideDisabled;
 	
 	
 	
@@ -25,6 +27,8 @@ public class Options {
 		isCerebellar = false;
 		isLeftEyeDisabled = false;
 		isRightEyeDisabled = false;
+		isLeftSideDisabled = false;
+		isRightSideDisabled = false;
 	}
 	
 	public Options(Map<Condition, Button> buttons) throws OptionsException{
@@ -51,11 +55,22 @@ public class Options {
 		eliminateBooleanErrors(buttons, new Condition("Cerebellum"));
 		isCerebellar = ((BooleanButton) buttons.get(new Condition("Cerebellum"))).getStatus();
 
-		eliminateBooleanErrors(buttons, new Condition("Cerebellum"));
+		eliminateBooleanErrors(buttons, new Condition("Left eye disabled"));
 		isLeftEyeDisabled = ((BooleanButton) buttons.get(new Condition("Left eye disabled"))).getStatus();
 		
-		eliminateBooleanErrors(buttons, new Condition("Cerebellum"));
+		eliminateBooleanErrors(buttons, new Condition("Right eye disabled"));
 		isRightEyeDisabled = ((BooleanButton) buttons.get(new Condition("Right eye disabled"))).getStatus();
+		
+
+		eliminateBooleanErrors(buttons, new Condition("Left side disabled"));
+		isLeftSideDisabled = ((BooleanButton) buttons.get(new Condition("Left side disabled"))).getStatus();
+		
+		eliminateBooleanErrors(buttons, new Condition("Right eye disabled"));
+		isRightSideDisabled = ((BooleanButton) buttons.get(new Condition("Right side disabled"))).getStatus();
+		
+
+		((BooleanButton) buttons.get(new Condition("Left side disabled"))).setValidity(!isRightSideDisabled);
+		((BooleanButton) buttons.get(new Condition("Right side disabled"))).setValidity(!isLeftSideDisabled);
 		
 	}
 	
